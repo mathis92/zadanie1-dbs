@@ -5,13 +5,29 @@
  */
 package com.mycompany.mobiledeviceservice;
 
+import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
+import com.mycompany.equip.DataHelpers;
+import com.mycompany.equip.DatabaseConnector;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Mds_mainGui extends javax.swing.JFrame {
+
+    public String[] services;
+    public Mds_findDevicePanel findDevicePanel = null;
+    public Mds_registerDevicePanel registerDevicePanel = null;
+    public Mds_repaireDevicePanel repairDevicePanel = null;
+    public Mds_sendDevicePanel sendDevicePanel = null;
 
     public Mds_mainGui() {
         initComponents();
         updateInfo();
+        DataHelpers.initializeVariables();
 
     }
 
@@ -25,13 +41,15 @@ public class Mds_mainGui extends javax.swing.JFrame {
     private void initComponents() {
 
         jDialog1 = new javax.swing.JDialog();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jTimeInfo = new javax.swing.JLabel();
+        jRepairAmountInfo = new javax.swing.JLabel();
         jWhatToDo = new javax.swing.JComboBox();
         jDoItButton = new javax.swing.JButton();
         jAboutServiceButton = new javax.swing.JButton();
-        jTimeInfo = new javax.swing.JLabel();
-        jRepairAmountInfo = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -45,103 +63,159 @@ public class Mds_mainGui extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1100, 650));
+        setPreferredSize(new java.awt.Dimension(1100, 650));
 
         jLabel1.setText("Mobile Device Service");
 
         jLabel4.setText("What to do : ");
 
-        jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jDoItButton.setText("Do It");
-
-        jAboutServiceButton.setText("About Us");
-
         jTimeInfo.setText("time info");
 
         jRepairAmountInfo.setText("jLabel3");
+
+        jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jWhatToDo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jWhatToDoActionPerformed(evt);
+            }
+        });
+
+        jDoItButton.setText("Do It");
+        jDoItButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDoItButtonActionPerformed(evt);
+            }
+        });
+
+        jAboutServiceButton.setText("About Us");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTimeInfo)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(120, 120, 120)
+                        .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(150, 150, 150)
+                        .addComponent(jDoItButton))
+                    .addComponent(jRepairAmountInfo))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(485, 485, 485)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 402, Short.MAX_VALUE)
+                .addComponent(jAboutServiceButton)
+                .addGap(28, 28, 28))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jAboutServiceButton))
+                .addGap(77, 77, 77)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDoItButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addComponent(jTimeInfo)
+                .addGap(126, 126, 126)
+                .addComponent(jRepairAmountInfo)
+                .addGap(182, 182, 182))
+        );
+
+        jTabbedPane1.addTab("Main screen", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(171, 171, 171)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jAboutServiceButton)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRepairAmountInfo)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTimeInfo)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
-                        .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65)
-                        .addComponent(jDoItButton)
-                        .addGap(36, 36, 36))))
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(65, 65, 65)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jDoItButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
-                .addComponent(jTimeInfo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRepairAmountInfo)
-                .addGap(7, 7, 7)
-                .addComponent(jAboutServiceButton)
-                .addContainerGap())
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 633, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jDoItButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDoItButtonActionPerformed
+
+        System.out.println(jWhatToDo.getSelectedIndex());
+        switch (jWhatToDo.getSelectedIndex()) {
+
+            case 0: {
+                if (registerDevicePanel == null) {
+                    try {
+                        registerDevicePanel = new Mds_registerDevicePanel(this);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                jTabbedPane1.addTab(services[0], registerDevicePanel);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                break;
+            }
+            case 1: {
+                if (repairDevicePanel == null) {
+                    repairDevicePanel = new Mds_repaireDevicePanel();
+                }
+                jTabbedPane1.addTab(services[1], repairDevicePanel);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                break;
+            }
+            case 2: {
+                if (sendDevicePanel == null) {
+                    sendDevicePanel = new Mds_sendDevicePanel();
+                }
+                jTabbedPane1.addTab(services[2], sendDevicePanel);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                break;
+            }
+            case 3: {
+
+                if (findDevicePanel == null) {
+                    findDevicePanel = new Mds_findDevicePanel();
+                }
+                jTabbedPane1.addTab(services[3], findDevicePanel);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                break;
+            }
+
+        }
+
+
+    }//GEN-LAST:event_jDoItButtonActionPerformed
+
+    private void jWhatToDoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWhatToDoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jWhatToDoActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Mds_mainGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Mds_mainGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Mds_mainGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Mds_mainGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel(new HiFiLookAndFeel());
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
+     
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Mds_mainGui().setVisible(true);
+
             }
         });
     }
@@ -149,7 +223,14 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateInfo() {
         Date date = new Date();
         jTimeInfo.setText(date.toString());
+        services = new String[]{"Register Device", "Repair device", "Send device", "Find registered device"};
 
+        jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(services));
+
+    }
+
+    public JTabbedPane getjTabbedPane1() {
+        return jTabbedPane1;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -158,7 +239,9 @@ public class Mds_mainGui extends javax.swing.JFrame {
     private javax.swing.JButton jDoItButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel jRepairAmountInfo;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel jTimeInfo;
     private javax.swing.JComboBox jWhatToDo;
     // End of variables declaration//GEN-END:variables
