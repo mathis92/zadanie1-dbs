@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mobiledeviceservice;
+package sk.mathis.stuba.mobiledeviceservice;
 
-import com.mycompany.data.Mds_registerDeviceDataCollector;
-import com.mycompany.device.DeviceModel;
-import com.mycompany.equip.DataHelpers;
+import sk.mathis.stuba.data.Mds_registerDeviceDataCollector;
+import sk.mathis.stuba.device.DeviceModel;
+import sk.mathis.stuba.equip.DataHelpers;
 import com.sun.imageio.plugins.jpeg.JPEG;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;

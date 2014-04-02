@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mobiledeviceservice;
+package sk.mathis.stuba.mobiledeviceservice;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
-import com.mycompany.equip.DataHelpers;
-import com.mycompany.equip.DatabaseConnector;
+import sk.mathis.stuba.equip.DataHelpers;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -64,7 +63,6 @@ public class Mds_mainGui extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1100, 650));
-        setPreferredSize(new java.awt.Dimension(1100, 650));
 
         jLabel1.setText("Mobile Device Service");
 

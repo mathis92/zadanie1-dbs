@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.equip;
+package sk.mathis.stuba.equip;
 
 import java.sql.Array;
 import java.sql.Connection;

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.data;
+package sk.mathis.stuba.data;
 
-import com.mycompany.equip.DataHelpers;
+import sk.mathis.stuba.equip.DataHelpers;
 import java.util.ArrayList;
 
 /**

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.device;
+package sk.mathis.stuba.device;
 
 /**
  *
