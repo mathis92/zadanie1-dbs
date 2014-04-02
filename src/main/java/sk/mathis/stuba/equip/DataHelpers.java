@@ -28,20 +28,20 @@ public class DataHelpers {
     }
     
     public static void initializeVariables() {
-        mds_service_claimant.add("mds_service_claimant_name");
-        mds_service_claimant.add("mds_service_claimant_adress");
-        mds_service_claimant.add("mds_service_claimant_city");
-        mds_service_claimant.add("mds_service_claimant_country");
-        mds_service_claimant.add("mds_service_claimant_email");
-        mds_service_claimant.add("mds_service_claimant_phone_number");
-        mds_service_claimant.add("mds_service_claimant_legal_type");
-        mds_device.add("device_imei");
-        mds_device.add("device_type");
-        mds_device.add("mds_device_model_id_device_model");
+        mds_service_claimant.add("name");
+        mds_service_claimant.add("adress");
+        mds_service_claimant.add("city");
+        mds_service_claimant.add("country");
+        mds_service_claimant.add("email");
+        mds_service_claimant.add("phone_number");
+        mds_service_claimant.add("legal_type");
+        mds_device.add("imei");
+        mds_device.add("type");
+        mds_device.add("id_device_model");
        // mds_service_order.add("mds_service_order_registration_date");
-        mds_service_order.add("mds_service_order_fault_description");
-        mds_service_order.add("mds_device_id_device");
-        mds_service_order.add("mds_service_claimant_id_service_claimant");
+        mds_service_order.add("fault_description");
+        mds_service_order.add("id_device");
+        mds_service_order.add("id_claimant");
         
     }
 

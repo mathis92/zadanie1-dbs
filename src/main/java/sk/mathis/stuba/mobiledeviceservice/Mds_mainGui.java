@@ -18,7 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Mds_mainGui extends javax.swing.JFrame {
 
     public String[] services;
-    public Mds_findDevicePanel findDevicePanel = null;
+    public Mds_findSpecificDevicePanel findDevicePanel = null;
     public Mds_registerDevicePanel registerDevicePanel = null;
     public Mds_repaireDevicePanel repairDevicePanel = null;
     public Mds_sendDevicePanel sendDevicePanel = null;
@@ -184,7 +184,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
             case 3: {
 
                 if (findDevicePanel == null) {
-                    findDevicePanel = new Mds_findDevicePanel();
+                    findDevicePanel = new Mds_findSpecificDevicePanel();
                 }
                 jTabbedPane1.addTab(services[3], findDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
@@ -221,7 +221,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateInfo() {
         Date date = new Date();
         jTimeInfo.setText(date.toString());
-        services = new String[]{"Register Device", "Repair device", "Send device", "Find registered device"};
+        services = new String[]{"Register Device", "Repair device", "Send device", "Find specific registered device"};
 
         jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(services));
 

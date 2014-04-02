@@ -8,13 +8,10 @@ package sk.mathis.stuba.mobiledeviceservice;
 import sk.mathis.stuba.data.Mds_registerDeviceDataCollector;
 import sk.mathis.stuba.device.DeviceModel;
 import sk.mathis.stuba.equip.DataHelpers;
-import com.sun.imageio.plugins.jpeg.JPEG;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import java.lang.Number;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -297,16 +294,23 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 order = new ArrayList<String>();
                 // order.add(new Date().toString());
                 order.add(jDeviceFault.getText());
-                order.add(deviceModelMapString.get((String) jDeviceModelComboBox.getSelectedItem()).getModelId().toString());
+                
+                
                 Integer claimantid = null;
+                Integer deviceid = null;
                 try {
-                    ResultSet rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant ORDER BY id_service_claimant DESC LIMIT 1");
+                    ResultSet rs = DataHelpers.selectFrom("SELECT id_device FROM mds_device ORDER BY id_device DESC LIMIT 1");
+                    while (rs.next()) {
+                        deviceid = rs.getInt(1);
+                    }
+                    rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant ORDER BY id_service_claimant DESC LIMIT 1");
                     while (rs.next()) {
                         claimantid = rs.getInt(1);
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                order.add(deviceid.toString());
                 order.add(claimantid.toString());
                 collector = new Mds_registerDeviceDataCollector(order);
                 collector.executeInsertOrderData();
