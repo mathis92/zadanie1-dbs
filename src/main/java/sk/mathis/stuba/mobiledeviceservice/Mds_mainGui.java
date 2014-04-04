@@ -6,6 +6,7 @@
 package sk.mathis.stuba.mobiledeviceservice;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
+import java.sql.ResultSet;
 import sk.mathis.stuba.equip.DataHelpers;
 import java.sql.SQLException;
 import java.util.Date;
@@ -22,11 +23,14 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public Mds_registerDevicePanel registerDevicePanel = null;
     public Mds_repaireDevicePanel repairDevicePanel = null;
     public Mds_sendDevicePanel sendDevicePanel = null;
+    public Mds_testDevicePanel testDevicePanel = null;
 
     public Mds_mainGui() {
         initComponents();
         updateInfo();
         DataHelpers.initializeVariables();
+        DataHelpers.createConnection();
+        updateOrderCount();
 
     }
 
@@ -49,6 +53,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
         jWhatToDo = new javax.swing.JComboBox();
         jDoItButton = new javax.swing.JButton();
         jAboutServiceButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -88,6 +93,8 @@ public class Mds_mainGui extends javax.swing.JFrame {
 
         jAboutServiceButton.setText("About Us");
 
+        jLabel2.setText("Currently registered devices ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -102,7 +109,11 @@ public class Mds_mainGui extends javax.swing.JFrame {
                         .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(150, 150, 150)
                         .addComponent(jDoItButton))
-                    .addComponent(jRepairAmountInfo))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jRepairAmountInfo)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(485, 485, 485)
@@ -125,9 +136,11 @@ public class Mds_mainGui extends javax.swing.JFrame {
                     .addComponent(jDoItButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
                 .addComponent(jTimeInfo)
-                .addGap(126, 126, 126)
-                .addComponent(jRepairAmountInfo)
-                .addGap(182, 182, 182))
+                .addGap(127, 127, 127)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRepairAmountInfo)
+                    .addComponent(jLabel2))
+                .addGap(181, 181, 181))
         );
 
         jTabbedPane1.addTab("Main screen", jPanel1);
@@ -165,7 +178,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
-            case 1: {
+            case 3: {
                 if (repairDevicePanel == null) {
                     repairDevicePanel = new Mds_repaireDevicePanel();
                 }
@@ -173,7 +186,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
-            case 2: {
+            case 4: {
                 if (sendDevicePanel == null) {
                     sendDevicePanel = new Mds_sendDevicePanel();
                 }
@@ -181,16 +194,23 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
-            case 3: {
+            case 1: {
 
                 if (findDevicePanel == null) {
                     findDevicePanel = new Mds_findSpecificDevicePanel();
                 }
-                jTabbedPane1.addTab(services[3], findDevicePanel);
+                jTabbedPane1.addTab(services[1], findDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
-
+            case 2: {
+                if(testDevicePanel == null){
+                    testDevicePanel = new Mds_testDevicePanel(this);
+                }
+                jTabbedPane1.addTab(services[2], testDevicePanel);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount()-1);
+                break;
+            }
         }
 
 
@@ -209,11 +229,10 @@ public class Mds_mainGui extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-     
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Mds_mainGui().setVisible(true);
-
             }
         });
     }
@@ -221,7 +240,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateInfo() {
         Date date = new Date();
         jTimeInfo.setText(date.toString());
-        services = new String[]{"Register Device", "Repair device", "Send device", "Find specific registered device"};
+        services = new String[]{"Register Device", "Find specific registered device","Test device", "Repair device", "Send device" };
 
         jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(services));
 
@@ -231,11 +250,24 @@ public class Mds_mainGui extends javax.swing.JFrame {
         return jTabbedPane1;
     }
 
+    public void updateOrderCount() {
+        ResultSet rs;
+        rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_service_order");
+        try {
+            while (rs.next()) {
+                jRepairAmountInfo.setText(rs.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAboutServiceButton;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JButton jDoItButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel jRepairAmountInfo;

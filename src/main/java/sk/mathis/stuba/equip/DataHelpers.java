@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,11 +24,10 @@ public class DataHelpers {
     public static ArrayList<String> mds_service_claimant = new ArrayList<String>();
     public static ArrayList<String> mds_device = new ArrayList<String>();
     public static ArrayList<String> mds_service_order = new ArrayList<String>();
+    public static ArrayList<String> mds_testing = new ArrayList<String>();
+    public static ArrayList<String> mds_test = new ArrayList<String>();
+    public static Connection conn;
 
-    public DataHelpers() {
-
-    }
-    
     public static void initializeVariables() {
         mds_service_claimant.add("name");
         mds_service_claimant.add("adress");
@@ -38,21 +39,39 @@ public class DataHelpers {
         mds_device.add("imei");
         mds_device.add("type");
         mds_device.add("id_device_model");
-       // mds_service_order.add("mds_service_order_registration_date");
+        // mds_service_order.add("mds_service_order_registration_date");
         mds_service_order.add("fault_description");
         mds_service_order.add("id_device");
         mds_service_order.add("id_claimant");
-        
+        //  mds_testing.add("end_time");
+        mds_testing.add("id_head_diagnostician");
+        mds_testing.add("id_device");
+        mds_test.add("type");
+        mds_test.add("id_testing");
+        mds_test.add("found_fault");
+
     }
 
+    public static void createConnection(){
+        try {
+            //Connection conn;
+
+            String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
+            conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+        } catch (SQLException ex) {
+            Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     public static ResultSet selectFrom(String line) {
         ResultSet rs = null;
         try {
 
-            Connection conn;
+          //  Connection conn;
 
-            String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-            conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+           // String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
+           // conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
             Statement stmt = (Statement) conn.createStatement();
             rs = stmt.executeQuery(line);
 
@@ -62,14 +81,29 @@ public class DataHelpers {
         return rs;
     }
 
+    public static void updateRow(String line) {
+        try {
+          //  Connection conn;
+            
+         //   String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
+         //   conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+            Statement stmt = (Statement) conn.createStatement();
+            stmt.executeUpdate(line);
+            System.out.println(line);
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static void insertInto(String line) {
 
         try {
 
-            Connection conn;
+       //     Connection conn;
 
-            String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-            conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+      //      String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
+      //      conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
             Statement stmt = (Statement) conn.createStatement();
             System.out.println(line);
             stmt.executeUpdate(line);

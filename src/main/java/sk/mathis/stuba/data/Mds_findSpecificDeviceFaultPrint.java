@@ -4,14 +4,15 @@
  * and open the template in the editor.
  */
 
-package sk.mathis.stuba.equip;
+package sk.mathis.stuba.data;
 
 /**
  *
  * @author Mathis
  */
-public enum FindingTypes {
-    IMEI,
-    EMAIL,
-    PHONENUMBER;
+public class Mds_findSpecificDeviceFaultPrint {
+
+    public Mds_findSpecificDeviceFaultPrint() {
+    }
+    
 }

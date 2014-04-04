@@ -7,6 +7,7 @@ package sk.mathis.stuba.mobiledeviceservice;
 
 import javax.swing.table.DefaultTableModel;
 import sk.mathis.stuba.data.Mds_findSpecificDeviceDataCollector;
+import sk.mathis.stuba.data.Mds_findSpecificDeviceFaultPrint;
 import sk.mathis.stuba.equip.FindingTypes;
 
 /**
@@ -15,9 +16,9 @@ import sk.mathis.stuba.equip.FindingTypes;
  */
 public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form mds_findDevicePanle
-     */
+    private String findingMask = null;
+    private FindingTypes findingType = null;
+
     public Mds_findSpecificDevicePanel() {
         initComponents();
     }
@@ -31,6 +32,9 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         jDeviceData = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
@@ -43,6 +47,26 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
         jFindSpecificDevice = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jClaimantData = new javax.swing.JTable();
+
+        jDialog1.setEnabled(false);
+        jDialog1.setMaximumSize(new java.awt.Dimension(700, 450));
+        jDialog1.setMinimumSize(new java.awt.Dimension(700, 450));
+        jDialog1.setPreferredSize(new java.awt.Dimension(700, 450));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane4.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+        );
 
         setMinimumSize(new java.awt.Dimension(1100, 650));
 
@@ -67,6 +91,11 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        jDeviceData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jDeviceDataMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jDeviceData);
@@ -124,7 +153,7 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Id", "Name", "Adress", "City", "Country", "Email", "Phone number", "Legal type"
+                "Id", "Name", "Address", "City", "Country", "Email", "Phone number", "Legal type"
             }
         ) {
             Class[] types = new Class [] {
@@ -240,8 +269,7 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jFindUsingPhoneNumberMouseClicked
 
     private void jFindSpecificDeviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFindSpecificDeviceActionPerformed
-        String findingMask = null;
-        FindingTypes findingType = null;
+
         if (!jFindUsingIMEI.getText().equals("")) {
             findingMask = jFindUsingIMEI.getText();
             findingType = FindingTypes.IMEI;
@@ -257,14 +285,19 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
         claimantDataTablemodel.setRowCount(0);
         DefaultTableModel deviceDataTablemodel = (DefaultTableModel) jDeviceData.getModel();
         deviceDataTablemodel.setRowCount(0);
-        
+
         Mds_findSpecificDeviceDataCollector collector = new Mds_findSpecificDeviceDataCollector(findingType, findingMask, jClaimantData, jDeviceData);
     }//GEN-LAST:event_jFindSpecificDeviceActionPerformed
+
+    private void jDeviceDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDeviceDataMouseClicked
+
+    }//GEN-LAST:event_jDeviceDataMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable jClaimantData;
     private javax.swing.JTable jDeviceData;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JButton jFindSpecificDevice;
     private javax.swing.JTextField jFindUsingEmail;
     private javax.swing.JTextField jFindUsingIMEI;
@@ -275,5 +308,7 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,8 +10,6 @@ package sk.mathis.stuba.equip;
  *
  * @author Mathis
  */
-public enum FindingTypes {
-    IMEI,
-    EMAIL,
-    PHONENUMBER;
+public enum TestTypes {
+    DISPLAY,CAMERA,MEMORY,SPEAKER,BATTERY,CHARGING,SENSORS,STABILITY;
 }

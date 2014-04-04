@@ -32,6 +32,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
     Map<Integer, String> deviceVendorMap = new HashMap();
     Integer claimantRegistered = 0;
     Mds_mainGui gui;
+    private Integer foundPerson = null;
 
     public Mds_registerDevicePanel(Mds_mainGui gui) throws SQLException {
         this.gui = gui;
@@ -286,16 +287,16 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
             } else {
                 Mds_registerDeviceDataCollector collector = new Mds_registerDeviceDataCollector(registeredDeviceData);
                 collector.executeInsertDeviceData();
+
+                gui.getjTabbedPane1().removeTabAt(gui.getjTabbedPane1().getSelectedIndex());
                 gui.getjTabbedPane1().setSelectedIndex(0);
-                gui.getjTabbedPane1().removeTabAt(1);
                 gui.remove(gui.registerDevicePanel);
                 gui.registerDevicePanel = null;
 
                 order = new ArrayList<String>();
                 // order.add(new Date().toString());
                 order.add(jDeviceFault.getText());
-                
-                
+
                 Integer claimantid = null;
                 Integer deviceid = null;
                 try {
@@ -303,9 +304,13 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                     while (rs.next()) {
                         deviceid = rs.getInt(1);
                     }
-                    rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant ORDER BY id_service_claimant DESC LIMIT 1");
-                    while (rs.next()) {
-                        claimantid = rs.getInt(1);
+                    if (foundPerson != null) {
+                        claimantid = foundPerson;
+                    } else {
+                        rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant ORDER BY id_service_claimant DESC LIMIT 1");
+                        while (rs.next()) {
+                            claimantid = rs.getInt(1);
+                        }
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -314,6 +319,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 order.add(claimantid.toString());
                 collector = new Mds_registerDeviceDataCollector(order);
                 collector.executeInsertOrderData();
+                gui.updateOrderCount();
             }
         } else {
             JOptionPane.showMessageDialog(this, "The claimant must be filled first !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
@@ -346,8 +352,18 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         if (registeredClaimantData.contains("") || numberOK.equals(0)) {
             JOptionPane.showMessageDialog(this, "All arrays must be filled", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         } else {
-            Mds_registerDeviceDataCollector collector = new Mds_registerDeviceDataCollector(registeredClaimantData);
-            collector.executeInsertClaimantData();
+            ResultSet rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant where email = '" + jClaimantEmail.getText() + "' AND phone_number = '" + jClaimantPhone.getText() + "'");
+            try {
+                if (rs.next()) {
+                    System.out.println("nasiel som cloveka");
+                    foundPerson = rs.getInt(1);
+                } else {
+                    Mds_registerDeviceDataCollector collector = new Mds_registerDeviceDataCollector(registeredClaimantData);
+                    collector.executeInsertClaimantData();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
             registerButton.setEnabled(false);
             claimantRegistered = 1;
             jRegisterDeviceButton.setEnabled(true);
