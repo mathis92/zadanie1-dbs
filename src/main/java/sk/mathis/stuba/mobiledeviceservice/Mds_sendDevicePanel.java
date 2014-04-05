@@ -270,6 +270,11 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
             invoiceData.add(Integer.toString(diagnosticianIdComboBox.getSelectedIndex() + 1));
             invoiceData.add(id_repair.toString());
             gui.refreshListingPanel();
+            try {
+                gui.updateOrderCount();
+            } catch (SQLException ex) {
+                Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
             DataHelpers.insertFromArray(invoiceData, "mds_invoice", DataHelpers.mds_invoice);
         } else {
             JOptionPane.showMessageDialog(this, "You have to choose device to send !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);

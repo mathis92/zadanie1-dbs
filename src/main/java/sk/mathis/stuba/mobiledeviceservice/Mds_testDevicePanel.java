@@ -33,6 +33,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     private ArrayList<TestTypes> testTypesList = new ArrayList<TestTypes>();
     private Long id_testing = null;
     private String idTestedDevice = null;
+    private Integer selectedDeviceToTest = 0;
     private Mds_mainGui gui;
 
     public Mds_testDevicePanel(Mds_mainGui gui) {
@@ -526,6 +527,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
             idTestedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
             testingInfo.add(idTestedDevice);
             id_testing = DataHelpers.insertFromArray(testingInfo, "mds_testing", DataHelpers.mds_testing);
+            selectedDeviceToTest = 1;
             System.out.println(testingInfo);
             chooseDeviceToTest.setEnabled(false);
             displayTest.setEnabled(true);
@@ -552,6 +554,13 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_chooseDeviceToTestActionPerformed
 
     private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
+        if (selectedDeviceToTest.equals(1)) {
+            try {
+                DataHelpers.deleteRow("DELETE FROM mds_testing WHERE id_testing = " + id_testing);
+            } catch (SQLException ex) {
+                Logger.getLogger(Mds_testDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
         gui.getjTabbedPane1().setSelectedIndex(0);
         gui.remove(gui.testDevicePanel);

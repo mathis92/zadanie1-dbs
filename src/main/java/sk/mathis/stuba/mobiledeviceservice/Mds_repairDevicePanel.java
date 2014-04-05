@@ -23,6 +23,7 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     private Long id_diagnosis = null;
     private Long id_repair = null;
     private String idRepairedDevice = null;
+    private Integer deviceSelected = 0;
     private Mds_mainGui gui;
     private Integer reportOK = 0, costsOK = 0;
 
@@ -309,6 +310,7 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
             repairCosts.setEnabled(true);
             reportTextArea.setEnabled(true);
             submitRepairButton.setEnabled(true);
+            deviceSelected = 1;
         } else {
             JOptionPane.showMessageDialog(this, "You have to choose device to repair !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         }
@@ -347,6 +349,14 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_submitRepairButtonActionPerformed
 
     private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
+       if(deviceSelected.equals(1)){
+           try {
+               DataHelpers.deleteRow("DELETE  FROM mds_repair WHERE id_diagnosis ='" + id_diagnosis + "'");
+           } catch (SQLException ex) {
+               Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
+        
         gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
         gui.getjTabbedPane1().setSelectedIndex(0);
         gui.remove(gui.repairDevicePanel);

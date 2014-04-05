@@ -32,7 +32,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
         DataHelpers.initializeVariables();
         DataHelpers.createConnection();
         listingPanel = new Mds_fullListingPanel(this);
-        jTabbedPane1.addTab("All devices listing",listingPanel);
+        jTabbedPane1.addTab("All devices listing", listingPanel);
         jTabbedPane1.setSelectedIndex(0);
         listingPanel.fillListingTable();
         try {
@@ -61,8 +61,9 @@ public class Mds_mainGui extends javax.swing.JFrame {
         jRepairAmountInfo = new javax.swing.JLabel();
         jWhatToDo = new javax.swing.JComboBox();
         jDoItButton = new javax.swing.JButton();
-        jAboutServiceButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -100,9 +101,11 @@ public class Mds_mainGui extends javax.swing.JFrame {
             }
         });
 
-        jAboutServiceButton.setText("About Us");
-
         jLabel2.setText("Currently registered devices ");
+
+        jLabel3.setText("Currently repaired devices ");
+
+        jLabel5.setText("jLabel5");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,25 +123,25 @@ public class Mds_mainGui extends javax.swing.JFrame {
                         .addComponent(jDoItButton))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(jLabel2)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addGap(18, 18, 18)
-                        .addComponent(jRepairAmountInfo)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jRepairAmountInfo))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(485, 485, 485)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 402, Short.MAX_VALUE)
-                .addComponent(jAboutServiceButton)
-                .addGap(28, 28, 28))
+                .addGap(28, 507, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jAboutServiceButton))
-                .addGap(77, 77, 77)
+                .addGap(23, 23, 23)
+                .addComponent(jLabel1)
+                .addGap(82, 82, 82)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jWhatToDo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -149,7 +152,11 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRepairAmountInfo)
                     .addComponent(jLabel2))
-                .addGap(181, 181, 181))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5))
+                .addGap(161, 161, 161))
         );
 
         jTabbedPane1.addTab("Main screen", jPanel1);
@@ -266,9 +273,13 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateOrderCount() throws SQLException {
         ResultSet rs;
         try {
-            rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_service_order");
+            rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_service_order WHERE device_sent = 0");
             while (rs.next()) {
                 jRepairAmountInfo.setText(rs.getString(1));
+            }
+            rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_sent_devices");
+            while (rs.next()) {
+                jLabel5.setText(rs.getString(1));
             }
         } catch (SQLException ex) {
             Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
@@ -280,12 +291,13 @@ public class Mds_mainGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jAboutServiceButton;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JButton jDoItButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel jRepairAmountInfo;
     private javax.swing.JTabbedPane jTabbedPane1;

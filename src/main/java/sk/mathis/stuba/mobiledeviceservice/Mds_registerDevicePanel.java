@@ -327,6 +327,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 try {
                     gui.updateOrderCount();
                     gui.refreshListingPanel();
+                    gui.updateOrderCount();
                 } catch (SQLException ex) {
                     Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
