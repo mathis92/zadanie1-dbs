@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import static sk.mathis.stuba.equip.DataHelpers.conn;
 
 public class Mds_mainGui extends javax.swing.JFrame {
 
@@ -187,7 +186,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 if (repairDevicePanel == null) {
                     repairDevicePanel = new Mds_repairDevicePanel(this);
                 }
-                jTabbedPane1.addTab(services[1], repairDevicePanel);
+                jTabbedPane1.addTab(services[3], repairDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
@@ -195,7 +194,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 if (sendDevicePanel == null) {
                     sendDevicePanel = new Mds_sendDevicePanel(this);
                 }
-                jTabbedPane1.addTab(services[2], sendDevicePanel);
+                jTabbedPane1.addTab(services[4], sendDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }

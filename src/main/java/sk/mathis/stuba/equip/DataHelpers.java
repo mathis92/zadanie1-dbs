@@ -29,6 +29,7 @@ public class DataHelpers {
     public static ArrayList<String> mds_diagnosis = new ArrayList<String>();
     public static ArrayList<String> mds_repair = new ArrayList<String>();
     public static ArrayList<String> mds_sent_devices = new ArrayList<String>();
+    public static ArrayList<String> mds_invoice = new ArrayList<String>();
     public static Connection conn;
 
     public static void initializeVariables() {
@@ -59,7 +60,10 @@ public class DataHelpers {
         mds_repair.add("id_diagnosis");
         mds_sent_devices.add("id_repair");
         mds_sent_devices.add("id_diagnostician");
-    }
+        mds_invoice.add("price");
+        mds_invoice.add("id_diagnostician");
+        mds_invoice.add("id_repair");
+        }
 
     public static void createConnection() {
         try {
@@ -74,28 +78,28 @@ public class DataHelpers {
     public static ResultSet selectFrom(String line) throws SQLException {
         ResultSet rs = null;
         try {
-            
+
             Statement stmt = (Statement) conn.createStatement();
             rs = stmt.executeQuery(line);
             conn.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } 
-        
+        }
+
         return rs;
     }
 
-    public static void updateRow(String line) throws SQLException {
+    public static void updateRow(String line) {
         try {
 
             Statement stmt = (Statement) conn.createStatement();
+            System.out.println(line);
             stmt.executeUpdate(line);
             conn.commit();
-            System.out.println(line);
         } catch (SQLException ex) {
             System.out.println(ex);
             Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
 
     public static void deleteRow(String line) throws SQLException {
@@ -108,7 +112,7 @@ public class DataHelpers {
         } catch (SQLException ex) {
             System.out.println(ex);
             Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
-        }   
+        }
     }
 
     public static Long insertInto(String line) throws SQLException {
@@ -120,13 +124,13 @@ public class DataHelpers {
             System.out.println(line);
             stmt.executeUpdate(line, Statement.RETURN_GENERATED_KEYS);
             generatedKey = stmt.getGeneratedKeys();
-            while(generatedKey.next()){
+            while (generatedKey.next()) {
                 id = generatedKey.getLong(1);
             }
             conn.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } 
+        }
         return id;
     }
 

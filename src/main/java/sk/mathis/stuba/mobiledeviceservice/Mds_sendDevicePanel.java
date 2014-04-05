@@ -20,6 +20,8 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
 
     private Mds_mainGui gui;
     private Mds_sendDeviceDataCollector collector;
+    Long id_repair = null;
+    Double id_repair_costs = null;
 
     public Mds_sendDevicePanel(Mds_mainGui gui) {
         initComponents();
@@ -44,6 +46,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         SelectedDeviceTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         reportTextArea = new javax.swing.JTextArea();
+        downloadPdfInvoice = new javax.swing.JButton();
 
         setDoubleBuffered(false);
         setMinimumSize(new java.awt.Dimension(1100, 650));
@@ -115,6 +118,8 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         reportTextArea.setRows(5);
         jScrollPane3.setViewportView(reportTextArea);
 
+        downloadPdfInvoice.setText("Download pdf invoice ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -122,9 +127,6 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -142,7 +144,12 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cancelOperation)
-                            .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(downloadPdfInvoice))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -176,7 +183,9 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                         .addComponent(chooseDeviceToSend)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(downloadPdfInvoice)
+                .addContainerGap(226, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
  public final void setDiagnosticianComboBox() {
@@ -208,17 +217,19 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         collector.fillSelectedDeviceTable(devicesToSendTable.getSelectedRow());
         ResultSet rs;
         try {
-            rs = DataHelpers.selectFrom("SELECT report FROM (SELECT id_device,imei,vendor,model,report FROM (SELECT mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
+            rs = DataHelpers.selectFrom("SELECT report FROM (SELECT id_device,imei,vendor,model,report FROM (SELECT mds_service_order.device_sent, mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
                     + "	FROM mds_repair\n"
                     + "	JOIN mds_diagnosis\n"
                     + "	 ON mds_repair.id_diagnosis = mds_diagnosis.id_diagnosis\n"
                     + "	JOIN mds_device\n"
                     + "		ON mds_diagnosis.id_device = mds_device.id_device\n"
+                    + "	JOIN mds_service_order\n"
+                    + "		ON mds_service_order.id_device = mds_device.id_device\n"
                     + "	JOIN mds_device_model\n"
                     + "		ON mds_device.id_device_model = mds_device_model.id_device_model\n"
                     + "	JOIN mds_device_vendor\n"
                     + "	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
-                    + "WHERE table1.repaired = 1) AS `table2` \n"
+                    + "WHERE table1.device_sent = 0) AS `table2` \n"
                     + "WHERE id_device = '" + devicesToSendTable.getValueAt(devicesToSendTable.getSelectedRow(), 0) + "'");
             while (rs.next()) {
                 reportTextArea.setText(rs.getString(1));
@@ -231,10 +242,10 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
     private void chooseDeviceToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToSendActionPerformed
         ResultSet rs;
         ArrayList<String> sendInfo = new ArrayList<String>();
-        Long id_repair = null;
+        ArrayList<String> invoiceData = new ArrayList<String>();
         String idRepairedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
         try {
-            rs = DataHelpers.selectFrom("SELECT id_repair FROM (SELECT mds_repair.id_repair, mds_diagnosis.id_device\n"
+            rs = DataHelpers.selectFrom("SELECT id_repair,repair_costs FROM (SELECT mds_repair.id_repair, mds_repair.repair_costs, mds_diagnosis.id_device\n"
                     + "	FROM mds_repair\n"
                     + "	JOIN mds_diagnosis\n"
                     + "		ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis) AS `table1`\n"
@@ -242,6 +253,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
 
             while (rs.next()) {
                 id_repair = rs.getLong(1);
+                id_repair_costs = rs.getDouble(2);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -250,6 +262,12 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
         sendInfo.add(diagId.toString());
         DataHelpers.insertFromArray(sendInfo, "mds_sent_devices", DataHelpers.mds_sent_devices);
+        System.out.println(idRepairedDevice);
+        DataHelpers.updateRow("UPDATE mds_service_order SET mds_service_order.device_sent = 1 WHERE mds_service_order.id_device ='" + idRepairedDevice + "'");
+        invoiceData.add(id_repair_costs.toString());
+        invoiceData.add(Integer.toString(diagnosticianIdComboBox.getSelectedIndex()+1));
+        invoiceData.add(id_repair.toString());
+        DataHelpers.insertFromArray(invoiceData, "mds_invoice", DataHelpers.mds_invoice);
 
     }//GEN-LAST:event_chooseDeviceToSendActionPerformed
 
@@ -268,6 +286,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
     private javax.swing.JButton chooseDeviceToSend;
     private javax.swing.JTable devicesToSendTable;
     private javax.swing.JComboBox diagnosticianIdComboBox;
+    private javax.swing.JButton downloadPdfInvoice;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

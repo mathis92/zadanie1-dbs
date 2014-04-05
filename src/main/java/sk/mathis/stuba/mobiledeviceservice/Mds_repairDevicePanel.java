@@ -56,6 +56,8 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
         cancelOperation = new javax.swing.JButton();
         diagnosticianIdComboBox = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        repairCosts = new javax.swing.JFormattedTextField();
 
         setMinimumSize(new java.awt.Dimension(1100, 650));
 
@@ -139,6 +141,19 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
 
         jLabel4.setText("Diagnostician : ");
 
+        jLabel5.setText("Repair costs :");
+
+        repairCosts.setForeground(new java.awt.Color(204, 204, 255));
+        repairCosts.setText("format xxx.yy");
+        repairCosts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                repairCostsMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                repairCostsMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -152,9 +167,14 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
                         .addGap(510, 510, 510))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 737, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1022, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(48, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 737, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addGap(33, 33, 33)
+                                .addComponent(repairCosts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(36, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,7 +217,11 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
                 .addGap(184, 184, 184)
                 .addComponent(chooseDeviceToRepair)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(repairCosts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -268,24 +292,21 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
             Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         repairInfo.add(id_diagnosis.toString());
-
         id_repair = DataHelpers.insertFromArray(repairInfo, "mds_repair", DataHelpers.mds_repair);
 
 
     }//GEN-LAST:event_chooseDeviceToRepairActionPerformed
 
     private void submitRepairButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitRepairButtonActionPerformed
-        try {
-            DataHelpers.updateRow("UPDATE mds_repair SET end_time = CURRENT_TIMESTAMP, report = '" + reportTextArea.getText() + "' WHERE id_repair = '" + id_repair + "'");
-            DataHelpers.updateRow("UPDATE mds_device SET repaired = 1 WHERE id_device = '" + idRepairedDevice + "'");
 
-            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
-            gui.getjTabbedPane1().setSelectedIndex(0);
-            gui.remove(gui.repairDevicePanel);
-            gui.repairDevicePanel = null;
-        } catch (SQLException ex) {
-            Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        DataHelpers.updateRow("UPDATE mds_repair SET end_time = CURRENT_TIMESTAMP, report = '" + reportTextArea.getText() + "' WHERE id_repair = '" + id_repair + "'");
+        DataHelpers.updateRow("UPDATE mds_device SET repaired = 1 WHERE id_device = '" + idRepairedDevice + "'");
+        DataHelpers.updateRow("UPDATE mds_repair SET repair_costs ='" + repairCosts.getText()+ "' WHERE id_repair = '" + id_repair +"'");
+        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+        gui.getjTabbedPane1().setSelectedIndex(0);
+        gui.remove(gui.repairDevicePanel);
+        gui.repairDevicePanel = null;
+
 
     }//GEN-LAST:event_submitRepairButtonActionPerformed
 
@@ -295,6 +316,13 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
         gui.remove(gui.repairDevicePanel);
         gui.repairDevicePanel = null;
     }//GEN-LAST:event_cancelOperationActionPerformed
+
+    private void repairCostsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_repairCostsMouseClicked
+        repairCosts.setText("");
+    }//GEN-LAST:event_repairCostsMouseClicked
+
+    private void repairCostsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_repairCostsMouseExited
+    }//GEN-LAST:event_repairCostsMouseExited
 
     public JTable getDevicesToRepairTable() {
         return devicesToRepairTable;
@@ -316,10 +344,12 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JFormattedTextField repairCosts;
     private javax.swing.JTextArea reportTextArea;
     private javax.swing.JButton submitRepairButton;
     // End of variables declaration//GEN-END:variables

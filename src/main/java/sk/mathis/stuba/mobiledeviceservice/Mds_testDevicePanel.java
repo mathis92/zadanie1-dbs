@@ -411,57 +411,55 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cameraTestFieldActionPerformed
 
     private void submitTestsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitTestsButtonActionPerformed
-        try {
-            if (batteryTest.isSelected()) {
-                testTypesList.add(TestTypes.BATTERY);
-                testResults.add(batteryTestField);
-            }
-            if (cameraTest.isSelected()) {
-                testTypesList.add(TestTypes.CAMERA);
-                testResults.add(cameraTestField);
-            }
-            if (chargingTest.isSelected()) {
-                testTypesList.add(TestTypes.CHARGING);
-                testResults.add(chargingTestField);
-            }
-            if (displayTest.isSelected()) {
-                testTypesList.add(TestTypes.DISPLAY);
-                testResults.add(displayTestField);
-            }
-            if (memoryTest.isSelected()) {
-                testTypesList.add(TestTypes.MEMORY);
-                testResults.add(memoryTestField);
-            }
-            if (sensorTest.isSelected()) {
-                testTypesList.add(TestTypes.SENSORS);
-                testResults.add(sensorsTestField);
-            }
-            if (stabilityTest.isSelected()) {
-                testTypesList.add(TestTypes.STABILITY);
-                testResults.add(stabilityTestField);
-            }
-            if (speakerTest.isSelected()) {
-                testTypesList.add(TestTypes.SPEAKER);
-                testResults.add(speakerTestField);
-            }
-            collector.fillTests(testTypesList, testResults, id_testing);
-            DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
-            DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing + "'");
-            collector.fillDiagnosisTable(Integer.parseInt(idTestedDevice));
-            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
-            gui.getjTabbedPane1().setSelectedIndex(0);
-            gui.remove(gui.testDevicePanel);
-            gui.testDevicePanel = null;
-        } catch (SQLException ex) {
-            Logger.getLogger(Mds_testDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+
+        if (batteryTest.isSelected()) {
+            testTypesList.add(TestTypes.BATTERY);
+            testResults.add(batteryTestField);
         }
+        if (cameraTest.isSelected()) {
+            testTypesList.add(TestTypes.CAMERA);
+            testResults.add(cameraTestField);
+        }
+        if (chargingTest.isSelected()) {
+            testTypesList.add(TestTypes.CHARGING);
+            testResults.add(chargingTestField);
+        }
+        if (displayTest.isSelected()) {
+            testTypesList.add(TestTypes.DISPLAY);
+            testResults.add(displayTestField);
+        }
+        if (memoryTest.isSelected()) {
+            testTypesList.add(TestTypes.MEMORY);
+            testResults.add(memoryTestField);
+        }
+        if (sensorTest.isSelected()) {
+            testTypesList.add(TestTypes.SENSORS);
+            testResults.add(sensorsTestField);
+        }
+        if (stabilityTest.isSelected()) {
+            testTypesList.add(TestTypes.STABILITY);
+            testResults.add(stabilityTestField);
+        }
+        if (speakerTest.isSelected()) {
+            testTypesList.add(TestTypes.SPEAKER);
+            testResults.add(speakerTestField);
+        }
+        collector.fillTests(testTypesList, testResults, id_testing);
+        DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
+        DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing + "'");
+        collector.fillDiagnosisTable(Integer.parseInt(idTestedDevice));
+        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+        gui.getjTabbedPane1().setSelectedIndex(0);
+        gui.remove(gui.testDevicePanel);
+        gui.testDevicePanel = null;
+
 
     }//GEN-LAST:event_submitTestsButtonActionPerformed
 
     private void chooseDeviceToTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToTestActionPerformed
         ArrayList<String> testingInfo = new ArrayList<String>();
         //testingInfo.add(new Date());
-        Integer diagId = diagnosticianIdComboBox.getSelectedIndex()+1;
+        Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
         testingInfo.add(diagId.toString());
         idTestedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
         testingInfo.add(idTestedDevice);

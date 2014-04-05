@@ -24,17 +24,19 @@ public class Mds_sendDeviceDataCollector {
         devicesToSendTable = (DefaultTableModel) sendPanel.getDevicesToSendTable().getModel();
         try {
 
-            ResultSet rs = DataHelpers.selectFrom("SELECT id_device,imei,vendor,model,report FROM (SELECT mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
+            ResultSet rs = DataHelpers.selectFrom("SELECT id_device,imei,vendor,model,report FROM (SELECT mds_service_order.device_sent, mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
                     + "	FROM mds_repair\n"
                     + "	JOIN mds_diagnosis\n"
                     + "	 ON mds_repair.id_diagnosis = mds_diagnosis.id_diagnosis\n"
                     + "	JOIN mds_device\n"
                     + "		ON mds_diagnosis.id_device = mds_device.id_device\n"
+                    + "	JOIN mds_service_order\n"
+                    + "		ON mds_service_order.id_device = mds_device.id_device\n"
                     + "	JOIN mds_device_model\n"
                     + "		ON mds_device.id_device_model = mds_device_model.id_device_model\n"
                     + "	JOIN mds_device_vendor\n"
                     + "	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
-                    + "WHERE table1.repaired = 1");
+                    + "WHERE table1.device_sent = 0");
             while (rs.next()) {
                 for (int i = 0; i < 5; i++) {
 
@@ -56,17 +58,19 @@ public class Mds_sendDeviceDataCollector {
 
         selectedDevice = (DefaultTableModel) sendPanel.getSelectedDeviceTable().getModel();
         try {
-            ResultSet rs = DataHelpers.selectFrom("SELECT id_device,imei,vendor,model,report FROM (SELECT mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
+            ResultSet rs = DataHelpers.selectFrom("SELECT id_device,imei,vendor,model,report FROM (SELECT mds_service_order.device_sent, mds_device.imei,mds_device_vendor.vendor,mds_device_model.model,mds_repair.report,mds_diagnosis.id_device,mds_device.repaired\n"
                     + "	FROM mds_repair\n"
                     + "	JOIN mds_diagnosis\n"
                     + "	 ON mds_repair.id_diagnosis = mds_diagnosis.id_diagnosis\n"
                     + "	JOIN mds_device\n"
                     + "		ON mds_diagnosis.id_device = mds_device.id_device\n"
+                    + "	JOIN mds_service_order\n"
+                    + "		ON mds_service_order.id_device = mds_device.id_device\n"
                     + "	JOIN mds_device_model\n"
                     + "		ON mds_device.id_device_model = mds_device_model.id_device_model\n"
                     + "	JOIN mds_device_vendor\n"
                     + "	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
-                    + "WHERE table1.repaired = 1;");
+                    + "WHERE table1.device_sent = 0;");
             int j = 0;
             while (rs.next()) {
                 if (selectedRow.equals(j)) {
