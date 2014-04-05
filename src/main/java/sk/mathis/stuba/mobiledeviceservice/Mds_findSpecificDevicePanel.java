@@ -5,6 +5,7 @@
  */
 package sk.mathis.stuba.mobiledeviceservice;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import sk.mathis.stuba.data.Mds_findSpecificDeviceDataCollector;
 import sk.mathis.stuba.equip.FindingTypes;
@@ -16,8 +17,10 @@ import sk.mathis.stuba.equip.FindingTypes;
 public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
     private String findingMask = null;
+    private Integer insertOk = 0;
     private FindingTypes findingType = null;
     private Mds_mainGui gui;
+
     public Mds_findSpecificDevicePanel(Mds_mainGui gui) {
         initComponents();
         this.gui = gui;
@@ -33,8 +36,6 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jDialog1 = new javax.swing.JDialog();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         jDeviceData = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
@@ -50,21 +51,18 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
         cancelOperation = new javax.swing.JButton();
 
         jDialog1.setEnabled(false);
-        jDialog1.setMinimumSize(new java.awt.Dimension(700, 450));
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane4.setViewportView(jTextArea1);
+        jDialog1.setMinimumSize(new java.awt.Dimension(110, 650));
+        jDialog1.setPreferredSize(new java.awt.Dimension(110, 650));
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
         jDialog1Layout.setHorizontalGroup(
             jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
+            .addGap(0, 720, Short.MAX_VALUE)
         );
         jDialog1Layout.setVerticalGroup(
             jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+            .addGap(0, 468, Short.MAX_VALUE)
         );
 
         setMinimumSize(new java.awt.Dimension(1100, 650));
@@ -282,26 +280,47 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     private void jFindSpecificDeviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFindSpecificDeviceActionPerformed
 
         if (!jFindUsingIMEI.getText().equals("")) {
-            findingMask = jFindUsingIMEI.getText();
-            findingType = FindingTypes.IMEI;
-
+            if (jFindUsingIMEI.getText().matches(".*\\d.*")) {
+                findingMask = jFindUsingIMEI.getText();
+                findingType = FindingTypes.IMEI;
+                insertOk = 1;
+            } else{
+                JOptionPane.showMessageDialog(this, "IMEI number contains only digits", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+            }
         } else if (!jFindUsingEmail.getText().equals("")) {
-            findingMask = jFindUsingEmail.getText();
-            findingType = FindingTypes.EMAIL;
+            if (jFindUsingEmail.getText().matches(".*@.*")) {
+                findingMask = jFindUsingEmail.getText();
+                findingType = FindingTypes.EMAIL;
+                insertOk = 1;
+            } else { 
+                JOptionPane.showMessageDialog(this, "Email address must contain @", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+            }
         } else if (!jFindUsingPhoneNumber.getText().equals("")) {
-            findingMask = jFindUsingPhoneNumber.getText();
-            findingType = FindingTypes.PHONENUMBER;
+            if (jFindUsingPhoneNumber.getText().matches("\\d.*\\d.*\\d")) {
+                findingMask = jFindUsingPhoneNumber.getText();
+                findingType = FindingTypes.PHONENUMBER;
+                insertOk = 1;
+            }else { 
+                JOptionPane.showMessageDialog(this, "Phone number contains only digits", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+            }
         }
-        DefaultTableModel claimantDataTablemodel = (DefaultTableModel) jClaimantData.getModel();
-        claimantDataTablemodel.setRowCount(0);
-        DefaultTableModel deviceDataTablemodel = (DefaultTableModel) jDeviceData.getModel();
-        deviceDataTablemodel.setRowCount(0);
-
-        Mds_findSpecificDeviceDataCollector collector = new Mds_findSpecificDeviceDataCollector(findingType, findingMask, jClaimantData, jDeviceData);
+        if (insertOk.equals(1)) {
+            insertOk = 0;
+            DefaultTableModel claimantDataTablemodel = (DefaultTableModel) jClaimantData.getModel();
+            claimantDataTablemodel.setRowCount(0);
+            DefaultTableModel deviceDataTablemodel = (DefaultTableModel) jDeviceData.getModel();
+            deviceDataTablemodel.setRowCount(0);
+            Mds_findSpecificDeviceDataCollector collector = new Mds_findSpecificDeviceDataCollector(findingType, findingMask, jClaimantData, jDeviceData);
+        }
     }//GEN-LAST:event_jFindSpecificDeviceActionPerformed
 
     private void jDeviceDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDeviceDataMouseClicked
-
+        Mds_fullListingPanel listingPanel = new Mds_fullListingPanel(gui);
+        listingPanel.fillData( (Integer)(Integer.parseInt((String)jDeviceData.getValueAt(jDeviceData.getSelectedRow(), 0))));
+        jDialog1.setContentPane(listingPanel);
+        jDialog1.setSize(1100, 680);
+        jDialog1.setEnabled(true);
+        jDialog1.setVisible(true);
     }//GEN-LAST:event_jDeviceDataMouseClicked
 
     private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
@@ -328,7 +347,5 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }

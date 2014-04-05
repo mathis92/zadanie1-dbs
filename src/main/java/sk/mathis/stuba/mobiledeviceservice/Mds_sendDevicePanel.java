@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import sk.mathis.stuba.data.Mds_sendDeviceDataCollector;
 import sk.mathis.stuba.equip.DataHelpers;
@@ -141,7 +142,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(chooseDeviceToSend)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cancelOperation)
                             .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -185,7 +186,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(downloadPdfInvoice)
-                .addContainerGap(226, Short.MAX_VALUE))
+                .addContainerGap(246, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
  public final void setDiagnosticianComboBox() {
@@ -240,35 +241,39 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_devicesToSendTableMouseClicked
 
     private void chooseDeviceToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToSendActionPerformed
-        ResultSet rs;
-        ArrayList<String> sendInfo = new ArrayList<String>();
-        ArrayList<String> invoiceData = new ArrayList<String>();
-        String idRepairedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
-        try {
-            rs = DataHelpers.selectFrom("SELECT id_repair,repair_costs FROM (SELECT mds_repair.id_repair, mds_repair.repair_costs, mds_diagnosis.id_device\n"
-                    + "	FROM mds_repair\n"
-                    + "	JOIN mds_diagnosis\n"
-                    + "		ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis) AS `table1`\n"
-                    + "WHERE table1.id_device ='" + idRepairedDevice + "'");
+        if (SelectedDeviceTable.getModel().getRowCount() > 0) {
+            ResultSet rs;
+            ArrayList<String> sendInfo = new ArrayList<String>();
+            ArrayList<String> invoiceData = new ArrayList<String>();
+            String idRepairedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
+            try {
+                rs = DataHelpers.selectFrom("SELECT id_repair,repair_costs FROM (SELECT mds_repair.id_repair, mds_repair.repair_costs, mds_diagnosis.id_device\n"
+                        + "	FROM mds_repair\n"
+                        + "	JOIN mds_diagnosis\n"
+                        + "		ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis) AS `table1`\n"
+                        + "WHERE table1.id_device ='" + idRepairedDevice + "'");
 
-            while (rs.next()) {
-                id_repair = rs.getLong(1);
-                id_repair_costs = rs.getDouble(2);
+                while (rs.next()) {
+                    id_repair = rs.getLong(1);
+                    id_repair_costs = rs.getDouble(2);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            sendInfo.add(id_repair.toString());
+            Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
+            sendInfo.add(diagId.toString());
+            DataHelpers.insertFromArray(sendInfo, "mds_sent_devices", DataHelpers.mds_sent_devices);
+            System.out.println(idRepairedDevice);
+            DataHelpers.updateRow("UPDATE mds_service_order SET mds_service_order.device_sent = 1 WHERE mds_service_order.id_device ='" + idRepairedDevice + "'");
+            invoiceData.add(id_repair_costs.toString());
+            invoiceData.add(Integer.toString(diagnosticianIdComboBox.getSelectedIndex() + 1));
+            invoiceData.add(id_repair.toString());
+            gui.refreshListingPanel();
+            DataHelpers.insertFromArray(invoiceData, "mds_invoice", DataHelpers.mds_invoice);
+        } else {
+            JOptionPane.showMessageDialog(this, "You have to choose device to send !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         }
-        sendInfo.add(id_repair.toString());
-        Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
-        sendInfo.add(diagId.toString());
-        DataHelpers.insertFromArray(sendInfo, "mds_sent_devices", DataHelpers.mds_sent_devices);
-        System.out.println(idRepairedDevice);
-        DataHelpers.updateRow("UPDATE mds_service_order SET mds_service_order.device_sent = 1 WHERE mds_service_order.id_device ='" + idRepairedDevice + "'");
-        invoiceData.add(id_repair_costs.toString());
-        invoiceData.add(Integer.toString(diagnosticianIdComboBox.getSelectedIndex()+1));
-        invoiceData.add(id_repair.toString());
-        DataHelpers.insertFromArray(invoiceData, "mds_invoice", DataHelpers.mds_invoice);
-
     }//GEN-LAST:event_chooseDeviceToSendActionPerformed
 
     public JTable getDevicesToSendTable() {

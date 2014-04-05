@@ -41,16 +41,20 @@ public class Mds_findSpecificDeviceDataCollector {
                 try {
                     rs = DataHelpers.selectFrom("SELECT * FROM mds_service_claimant WHERE email = '" + findingMask + "'");
                     fillClaimantDataTable(rs);
-                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description  FROM (SELECT mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.email\n"
-                            + "   FROM mds_service_claimant \n"
-                            + "   JOIN mds_service_order \n"
-                            + "  	 ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
-                            + "   JOIN mds_device \n"
-                            + "      ON mds_service_order.id_device =  mds_device.id_device\n"
-                            + "   JOIN  mds_device_model\n"
-                            + "      ON mds_device.id_device_model = mds_device_model.id_device_model\n"
-                            + "   JOIN mds_device_vendor\n"
-                            + "      ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
+                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description,repaired,repair_costs,report  FROM (SELECT mds_device.repaired,mds_repair.repair_costs,mds_repair.report,mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.phone_number,mds_service_claimant.email\n"
+                            + "  FROM mds_service_claimant \n"
+                            + "	LEFT JOIN mds_service_order \n"
+                            + "		ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
+                            + "  	LEFT JOIN mds_device \n"
+                            + "   	ON mds_service_order.id_device =  mds_device.id_device\n"
+                            + "   LEFT JOIN mds_diagnosis\n"
+                            + "   	ON mds_diagnosis.id_device = mds_device.id_device\n"
+                            + "   LEFT JOIN mds_repair\n"
+                            + "   	ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis\n"
+                            + "  	LEFT JOIN  mds_device_model\n"
+                            + "    	ON mds_device.id_device_model = mds_device_model.id_device_model\n"
+                            + " 	LEFT JOIN mds_device_vendor\n"
+                            + "     	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
                             + "WHERE table1.email ='" + findingMask + "'");
                     fillDeviceDataTable(rs);
 
@@ -71,16 +75,20 @@ public class Mds_findSpecificDeviceDataCollector {
                             + "		ON mds_service_order.id_device =  mds_device.id_device) AS `table1`\n"
                             + "WHERE table1.imei = '" + findingMask + "'");
                     fillClaimantDataTable(rs);
-                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description  FROM (SELECT mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.email\n"
-                            + "   FROM mds_service_claimant \n"
-                            + "   JOIN mds_service_order \n"
-                            + "  	 ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
-                            + "   JOIN mds_device \n"
-                            + "      ON mds_service_order.id_device =  mds_device.id_device\n"
-                            + "   JOIN  mds_device_model\n"
-                            + "      ON mds_device.id_device_model = mds_device_model.id_device_model\n"
-                            + "   JOIN mds_device_vendor\n"
-                            + "      ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
+                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description,repaired,repair_costs,report  FROM (SELECT mds_device.repaired,mds_repair.repair_costs,mds_repair.report,mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.phone_number,mds_service_claimant.email\n"
+                            + "  FROM mds_service_claimant \n"
+                            + "	LEFT JOIN mds_service_order \n"
+                            + "		ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
+                            + "  	LEFT JOIN mds_device \n"
+                            + "   	ON mds_service_order.id_device =  mds_device.id_device\n"
+                            + "   LEFT JOIN mds_diagnosis\n"
+                            + "   	ON mds_diagnosis.id_device = mds_device.id_device\n"
+                            + "   LEFT JOIN mds_repair\n"
+                            + "   	ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis\n"
+                            + "  	LEFT JOIN  mds_device_model\n"
+                            + "    	ON mds_device.id_device_model = mds_device_model.id_device_model\n"
+                            + " 	LEFT JOIN mds_device_vendor\n"
+                            + "     	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
                             + "WHERE table1.imei = '" + findingMask + "'");
                     fillDeviceDataTable(rs);
                     break;
@@ -98,18 +106,22 @@ public class Mds_findSpecificDeviceDataCollector {
                             + "		ON mds_service_order.id_claimant = mds_service_claimant.id_service_claimant \n"
                             + "	JOIN mds_device \n"
                             + "		ON mds_service_order.id_device =  mds_device.id_device) AS `table1`\n"
-                            + "WHERE table1.phone_number = '" + findingMask + "'");
+                            + "WHERE table1.phone_number = '" + findingMask + "' LIMIT 1");
                     fillClaimantDataTable(rs);
-                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description  FROM (SELECT mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.phone_number\n"
+                    rs = DataHelpers.selectFrom("SELECT id_device,imei,registration_date,model,vendor,fault_description,repaired,repair_costs,report  FROM (SELECT mds_device.repaired,mds_repair.repair_costs,mds_repair.report,mds_device.id_device,mds_device.imei, mds_service_order.registration_date,mds_device_model.model, mds_device_vendor.vendor,mds_service_order.fault_description,mds_service_claimant.phone_number,mds_service_claimant.email\n"
                             + "  FROM mds_service_claimant \n"
-                            + "   JOIN mds_service_order \n"
-                            + " 	 ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
-                            + "  JOIN mds_device \n"
-                            + "     ON mds_service_order.id_device =  mds_device.id_device\n"
-                            + "  JOIN  mds_device_model\n"
-                            + "    ON mds_device.id_device_model = mds_device_model.id_device_model\n"
-                            + " JOIN mds_device_vendor\n"
-                            + "     ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
+                            + "	LEFT JOIN mds_service_order \n"
+                            + "		ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant \n"
+                            + "  	LEFT JOIN mds_device \n"
+                            + "   	ON mds_service_order.id_device =  mds_device.id_device\n"
+                            + "   LEFT JOIN mds_diagnosis\n"
+                            + "   	ON mds_diagnosis.id_device = mds_device.id_device\n"
+                            + "   LEFT JOIN mds_repair\n"
+                            + "   	ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis\n"
+                            + "  	LEFT JOIN  mds_device_model\n"
+                            + "    	ON mds_device.id_device_model = mds_device_model.id_device_model\n"
+                            + " 	LEFT JOIN mds_device_vendor\n"
+                            + "     	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
                             + "WHERE table1.phone_number = '" + findingMask + "'");
                     fillDeviceDataTable(rs);
 
@@ -147,14 +159,19 @@ public class Mds_findSpecificDeviceDataCollector {
     }
 
     private void fillDeviceDataTable(ResultSet rs) {
-        Object[] data = new Object[6];
+        Object[] data = new Object[9];
         DefaultTableModel deviceDataTablemodel;
 
         deviceDataTablemodel = (DefaultTableModel) deviceData.getModel();
         try {
             while (rs.next()) {
-                for (int i = 0; i < 6; i++) {
-                    data[i] = rs.getString(i + 1);
+                for (int i = 0; i < 9; i++) {
+                    if (i == 6) {
+                        data[i] = ((rs.getInt(i + 1) == 0) ? "not repaired" : "repaired");
+                    } else {
+                        data[i] = ((rs.getString(i + 1) == null) ? "--" : rs.getString(i + 1));
+
+                    }
                 }
                 deviceDataTablemodel.addRow(data);
                 deviceData.setModel(deviceDataTablemodel);

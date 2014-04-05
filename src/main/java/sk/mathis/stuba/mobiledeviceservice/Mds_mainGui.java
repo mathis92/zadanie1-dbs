@@ -24,12 +24,17 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public Mds_repairDevicePanel repairDevicePanel = null;
     public Mds_sendDevicePanel sendDevicePanel = null;
     public Mds_testDevicePanel testDevicePanel = null;
+    public Mds_fullListingPanel listingPanel = null;
 
     public Mds_mainGui() {
         initComponents();
         updateInfo();
         DataHelpers.initializeVariables();
         DataHelpers.createConnection();
+        listingPanel = new Mds_fullListingPanel(this);
+        jTabbedPane1.addTab("All devices listing",listingPanel);
+        jTabbedPane1.setSelectedIndex(0);
+        listingPanel.fillListingTable();
         try {
             updateOrderCount();
         } catch (SQLException ex) {
@@ -167,7 +172,6 @@ public class Mds_mainGui extends javax.swing.JFrame {
 
     private void jDoItButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDoItButtonActionPerformed
 
-        System.out.println(jWhatToDo.getSelectedIndex());
         switch (jWhatToDo.getSelectedIndex()) {
 
             case 0: {
@@ -215,6 +219,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
+
         }
 
 
@@ -250,6 +255,10 @@ public class Mds_mainGui extends javax.swing.JFrame {
 
     }
 
+    public void refreshListingPanel() {
+        listingPanel.fillListingTable();
+    }
+
     public JTabbedPane getjTabbedPane1() {
         return jTabbedPane1;
     }
@@ -264,6 +273,10 @@ public class Mds_mainGui extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public Mds_fullListingPanel getListingPanel() {
+        return listingPanel;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

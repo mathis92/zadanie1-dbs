@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import sk.mathis.stuba.data.Mds_testDeviceDataCollector;
 import sk.mathis.stuba.device.DeviceModel;
@@ -73,6 +74,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         cancelOperation = new javax.swing.JButton();
         diagnosticianIdComboBox = new javax.swing.JComboBox();
 
+        setEnabled(false);
         setMinimumSize(new java.awt.Dimension(1100, 650));
 
         jLabel1.setText("Test Device");
@@ -135,10 +137,13 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         }
 
         displayTest.setText("Display test");
+        displayTest.setEnabled(false);
 
         cameraTest.setText("Camera test");
+        cameraTest.setEnabled(false);
 
         memoryTest.setText("Memory test");
+        memoryTest.setEnabled(false);
         memoryTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 memoryTestActionPerformed(evt);
@@ -146,51 +151,65 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         });
 
         speakerTest.setText("Speaker test");
+        speakerTest.setEnabled(false);
 
         batteryTest.setText("Battery test");
+        batteryTest.setEnabled(false);
 
         chargingTest.setText("Charging test");
+        chargingTest.setEnabled(false);
 
         sensorTest.setText("Sensors test");
+        sensorTest.setEnabled(false);
 
         stabilityTest.setText("Stability test");
+        stabilityTest.setEnabled(false);
 
+        displayTestField.setEnabled(false);
+
+        cameraTestField.setEnabled(false);
         cameraTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cameraTestFieldActionPerformed(evt);
             }
         });
 
+        memoryTestField.setEnabled(false);
         memoryTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 memoryTestFieldActionPerformed(evt);
             }
         });
 
+        speakerTestField.setEnabled(false);
         speakerTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 speakerTestFieldActionPerformed(evt);
             }
         });
 
+        batteryTestField.setEnabled(false);
         batteryTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 batteryTestFieldActionPerformed(evt);
             }
         });
 
+        chargingTestField.setEnabled(false);
         chargingTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chargingTestFieldActionPerformed(evt);
             }
         });
 
+        sensorsTestField.setEnabled(false);
         sensorsTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sensorsTestFieldActionPerformed(evt);
             }
         });
 
+        stabilityTestField.setEnabled(false);
         stabilityTestField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stabilityTestFieldActionPerformed(evt);
@@ -198,6 +217,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         });
 
         submitTestsButton.setText("Submit tests");
+        submitTestsButton.setEnabled(false);
         submitTestsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 submitTestsButtonActionPerformed(evt);
@@ -351,6 +371,25 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
                 .addComponent(submitTestsButton)
                 .addGap(28, 28, 28))
         );
+
+        displayTest.getAccessibleContext().setAccessibleName("");
+        cameraTest.getAccessibleContext().setAccessibleName("");
+        memoryTest.getAccessibleContext().setAccessibleName("");
+        speakerTest.getAccessibleContext().setAccessibleName("");
+        batteryTest.getAccessibleContext().setAccessibleName("");
+        chargingTest.getAccessibleContext().setAccessibleName("");
+        sensorTest.getAccessibleContext().setAccessibleName("");
+        stabilityTest.getAccessibleContext().setAccessibleName("");
+        displayTestField.getAccessibleContext().setAccessibleName("");
+        cameraTestField.getAccessibleContext().setAccessibleName("");
+        memoryTestField.getAccessibleContext().setAccessibleName("");
+        speakerTestField.getAccessibleContext().setAccessibleName("");
+        batteryTestField.getAccessibleContext().setAccessibleName("");
+        chargingTestField.getAccessibleContext().setAccessibleName("");
+        sensorsTestField.getAccessibleContext().setAccessibleName("");
+        stabilityTestField.getAccessibleContext().setAccessibleName("");
+
+        getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
 
     public void setDiagnosticianComboBox() {
@@ -414,57 +453,102 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
 
         if (batteryTest.isSelected()) {
             testTypesList.add(TestTypes.BATTERY);
-            testResults.add(batteryTestField);
+            if (!batteryTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(batteryTestField);
+            }
         }
         if (cameraTest.isSelected()) {
             testTypesList.add(TestTypes.CAMERA);
-            testResults.add(cameraTestField);
+            if (!cameraTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(cameraTestField);
+            }
         }
         if (chargingTest.isSelected()) {
             testTypesList.add(TestTypes.CHARGING);
-            testResults.add(chargingTestField);
+            if (!chargingTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(chargingTestField);
+            }
         }
         if (displayTest.isSelected()) {
             testTypesList.add(TestTypes.DISPLAY);
-            testResults.add(displayTestField);
+            if (!displayTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(displayTestField);
+            }
         }
         if (memoryTest.isSelected()) {
             testTypesList.add(TestTypes.MEMORY);
-            testResults.add(memoryTestField);
+            if (!memoryTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(memoryTestField);
+            }
         }
         if (sensorTest.isSelected()) {
             testTypesList.add(TestTypes.SENSORS);
-            testResults.add(sensorsTestField);
+            if (!sensorsTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(sensorsTestField);
+            }
         }
         if (stabilityTest.isSelected()) {
             testTypesList.add(TestTypes.STABILITY);
-            testResults.add(stabilityTestField);
+            if (!speakerTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(stabilityTestField);
+            }
         }
         if (speakerTest.isSelected()) {
             testTypesList.add(TestTypes.SPEAKER);
-            testResults.add(speakerTestField);
+            if (!speakerTestField.getText().equalsIgnoreCase("")) {
+                testResults.add(speakerTestField);
+            }
         }
-        collector.fillTests(testTypesList, testResults, id_testing);
-        DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
-        DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing + "'");
-        collector.fillDiagnosisTable(Integer.parseInt(idTestedDevice));
-        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
-        gui.getjTabbedPane1().setSelectedIndex(0);
-        gui.remove(gui.testDevicePanel);
-        gui.testDevicePanel = null;
-
-
+        System.out.println(testTypesList);
+        if (!testResults.isEmpty() && !testTypesList.isEmpty()) {
+            collector.fillTests(testTypesList, testResults, id_testing);
+            DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
+            DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing + "'");
+            collector.fillDiagnosisTable(Integer.parseInt(idTestedDevice));
+            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+            gui.getjTabbedPane1().setSelectedIndex(0);
+            gui.remove(gui.testDevicePanel);
+            gui.refreshListingPanel();
+            gui.testDevicePanel = null;
+        } else {
+            testResults.clear();
+            testTypesList.clear();
+            JOptionPane.showMessageDialog(this, "You have to do some tests on the device!", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_submitTestsButtonActionPerformed
 
     private void chooseDeviceToTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToTestActionPerformed
-        ArrayList<String> testingInfo = new ArrayList<String>();
-        //testingInfo.add(new Date());
-        Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
-        testingInfo.add(diagId.toString());
-        idTestedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
-        testingInfo.add(idTestedDevice);
-        id_testing = DataHelpers.insertFromArray(testingInfo, "mds_testing", DataHelpers.mds_testing);
-        System.out.println(testingInfo);
+        if (SelectedDeviceTable.getModel().getRowCount() > 0) {
+            ArrayList<String> testingInfo = new ArrayList<String>();
+            //testingInfo.add(new Date());
+            Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
+            testingInfo.add(diagId.toString());
+            idTestedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
+            testingInfo.add(idTestedDevice);
+            id_testing = DataHelpers.insertFromArray(testingInfo, "mds_testing", DataHelpers.mds_testing);
+            System.out.println(testingInfo);
+            chooseDeviceToTest.setEnabled(false);
+            displayTest.setEnabled(true);
+            cameraTest.setEnabled(true);
+            memoryTest.setEnabled(true);
+            speakerTest.setEnabled(true);
+            batteryTest.setEnabled(true);
+            chargingTest.setEnabled(true);
+            sensorTest.setEnabled(true);
+            stabilityTest.setEnabled(true);
+            displayTestField.setEnabled(true);
+            cameraTestField.setEnabled(true);
+            memoryTestField.setEnabled(true);
+            speakerTestField.setEnabled(true);
+            batteryTestField.setEnabled(true);
+            chargingTestField.setEnabled(true);
+            sensorsTestField.setEnabled(true);
+            stabilityTestField.setEnabled(true);
+            submitTestsButton.setEnabled(true);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You have to choose a device to be tested !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_chooseDeviceToTestActionPerformed
 
     private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed

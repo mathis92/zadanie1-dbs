@@ -63,7 +63,7 @@ public class Mds_testDeviceDataCollector {
     }
 
     public void fillTests(ArrayList<TestTypes> testTypes, ArrayList<JFormattedTextField> faultfields, Long id_testing) {
-        for (int i = 0; i < testTypes.size(); i++) {
+        for (int i = 0; i < faultfields.size(); i++) {
             ArrayList<String> list = new ArrayList<String>();
             list.add(testTypes.get(i).toString());
             list.add(id_testing.toString());

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import sk.mathis.stuba.data.Mds_repairDeviceDataCollector;
 import sk.mathis.stuba.equip.DataHelpers;
@@ -22,7 +23,8 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     private Long id_diagnosis = null;
     private Long id_repair = null;
     private String idRepairedDevice = null;
-    Mds_mainGui gui;
+    private Mds_mainGui gui;
+    private Integer reportOK = 0, costsOK = 0;
 
     public Mds_repairDevicePanel(Mds_mainGui gui) {
         this.gui = gui;
@@ -114,18 +116,21 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
         });
 
         submitRepairButton.setText("Submit repair");
+        submitRepairButton.setEnabled(false);
         submitRepairButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 submitRepairButtonActionPerformed(evt);
             }
         });
 
+        diagnosisTextArea.setEditable(false);
         diagnosisTextArea.setColumns(20);
         diagnosisTextArea.setRows(5);
         jScrollPane3.setViewportView(diagnosisTextArea);
 
         reportTextArea.setColumns(20);
         reportTextArea.setRows(5);
+        reportTextArea.setEnabled(false);
         jScrollPane4.setViewportView(reportTextArea);
 
         jLabel3.setText("Repair report");
@@ -145,12 +150,18 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
 
         repairCosts.setForeground(new java.awt.Color(204, 204, 255));
         repairCosts.setText("format xxx.yy");
+        repairCosts.setEnabled(false);
         repairCosts.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 repairCostsMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 repairCostsMouseExited(evt);
+            }
+        });
+        repairCosts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                repairCostsActionPerformed(evt);
             }
         });
 
@@ -277,37 +288,62 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_devicesToRepairTableMouseClicked
 
     private void chooseDeviceToRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToRepairActionPerformed
-        ResultSet rs;
-        ArrayList<String> repairInfo = new ArrayList<String>();
-        Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
-        repairInfo.add(diagId.toString());
-        idRepairedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
-        try {
-            rs = DataHelpers.selectFrom("SELECT id_diagnosis FROM mds_diagnosis WHERE id_device ='" + idRepairedDevice + "'");
+        if (SelectedDeviceTable.getModel().getRowCount() > 0) {
+            ResultSet rs;
+            ArrayList<String> repairInfo = new ArrayList<String>();
+            Integer diagId = diagnosticianIdComboBox.getSelectedIndex() + 1;
+            repairInfo.add(diagId.toString());
+            idRepairedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
+            try {
+                rs = DataHelpers.selectFrom("SELECT id_diagnosis FROM mds_diagnosis WHERE id_device ='" + idRepairedDevice + "'");
 
-            while (rs.next()) {
-                id_diagnosis = rs.getLong(1);
+                while (rs.next()) {
+                    id_diagnosis = rs.getLong(1);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Mds_repairDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            repairInfo.add(id_diagnosis.toString());
+            id_repair = DataHelpers.insertFromArray(repairInfo, "mds_repair", DataHelpers.mds_repair);
+            chooseDeviceToRepair.setEnabled(false);
+            repairCosts.setEnabled(true);
+            reportTextArea.setEnabled(true);
+            submitRepairButton.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "You have to choose device to repair !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         }
-        repairInfo.add(id_diagnosis.toString());
-        id_repair = DataHelpers.insertFromArray(repairInfo, "mds_repair", DataHelpers.mds_repair);
-
 
     }//GEN-LAST:event_chooseDeviceToRepairActionPerformed
 
     private void submitRepairButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitRepairButtonActionPerformed
 
-        DataHelpers.updateRow("UPDATE mds_repair SET end_time = CURRENT_TIMESTAMP, report = '" + reportTextArea.getText() + "' WHERE id_repair = '" + id_repair + "'");
-        DataHelpers.updateRow("UPDATE mds_device SET repaired = 1 WHERE id_device = '" + idRepairedDevice + "'");
-        DataHelpers.updateRow("UPDATE mds_repair SET repair_costs ='" + repairCosts.getText()+ "' WHERE id_repair = '" + id_repair +"'");
-        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
-        gui.getjTabbedPane1().setSelectedIndex(0);
-        gui.remove(gui.repairDevicePanel);
-        gui.repairDevicePanel = null;
+        if (reportOK.equals(0) && !reportTextArea.getText().equalsIgnoreCase("")) {
+            DataHelpers.updateRow("UPDATE mds_repair SET end_time = CURRENT_TIMESTAMP, report = '" + reportTextArea.getText() + "' WHERE id_repair = '" + id_repair + "'");
+            reportOK = 1;
+        } else {
+            JOptionPane.showMessageDialog(this, "Repair report must be filled !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
 
+        }
+        System.out.println(reportOK);
+        System.out.println(costsOK);
+        if (costsOK.equals(0) && (repairCosts.getText().length() > 0) && !repairCosts.getText().equalsIgnoreCase("") && repairCosts.getText().matches(".*..*[0-9].*..*")) {
 
+            DataHelpers.updateRow("UPDATE mds_device SET repaired = 1 WHERE id_device = '" + idRepairedDevice + "'");
+            DataHelpers.updateRow("UPDATE mds_repair SET repair_costs ='" + repairCosts.getText() + "' WHERE id_repair = '" + id_repair + "'");
+            costsOK = 1;
+
+        } else {
+            if (costsOK.equals(0)) {
+                JOptionPane.showMessageDialog(this, "Repair costs must be filled in format xxx.yy !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        if (reportOK.equals(1) && costsOK.equals(1)) {
+            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+            gui.getjTabbedPane1().setSelectedIndex(0);
+            gui.remove(gui.repairDevicePanel);
+            gui.refreshListingPanel();
+            gui.repairDevicePanel = null;
+        }
     }//GEN-LAST:event_submitRepairButtonActionPerformed
 
     private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
@@ -322,7 +358,12 @@ public class Mds_repairDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_repairCostsMouseClicked
 
     private void repairCostsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_repairCostsMouseExited
+
     }//GEN-LAST:event_repairCostsMouseExited
+
+    private void repairCostsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_repairCostsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_repairCostsActionPerformed
 
     public JTable getDevicesToRepairTable() {
         return devicesToRepairTable;

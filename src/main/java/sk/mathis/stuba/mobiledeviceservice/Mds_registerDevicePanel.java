@@ -326,6 +326,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 collector.executeInsertOrderData();
                 try {
                     gui.updateOrderCount();
+                    gui.refreshListingPanel();
                 } catch (SQLException ex) {
                     Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -342,13 +343,20 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
         Integer numberOK = 0;
+        Integer emailOK = 0;
         registeredClaimantData = new ArrayList();
         registeredClaimantData.add(jClaimantName.getText());
 
         registeredClaimantData.add(jClaimantAdress.getText());
         registeredClaimantData.add(jClaimantCity.getText());
         registeredClaimantData.add(jClaimantCountry.getText());
-        registeredClaimantData.add(jClaimantEmail.getText());
+        if (jClaimantEmail.getText().matches(".*@.*")) {
+            emailOK = 1;
+            registeredClaimantData.add(jClaimantEmail.getText());
+        } else { 
+            emailOK = 0;
+              JOptionPane.showMessageDialog(this, "Email must contain @", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
+        }
         if (jClaimantPhone.getText().matches(".*\\d.*")) {
             registeredClaimantData.add(jClaimantPhone.getText());
             numberOK = 1;
@@ -358,7 +366,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         }
         registeredClaimantData.add((String) jClaimantLegalTypeComboBox.getSelectedItem());
 
-        if (registeredClaimantData.contains("") || numberOK.equals(0)) {
+        if (registeredClaimantData.contains("") || numberOK.equals(0) || emailOK.equals(0)) {
             JOptionPane.showMessageDialog(this, "All arrays must be filled", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
@@ -373,8 +381,8 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-            
+            }
+
             registerButton.setEnabled(false);
             claimantRegistered = 1;
             jRegisterDeviceButton.setEnabled(true);

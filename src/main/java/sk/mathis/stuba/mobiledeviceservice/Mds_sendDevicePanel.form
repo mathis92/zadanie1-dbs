@@ -43,7 +43,7 @@
                               <Component id="chooseDeviceToSend" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="62" max="32767" attributes="0"/>
+                      <EmptySpace pref="44" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="cancelOperation" min="-2" max="-2" attributes="0"/>
                           <Component id="diagnosticianIdComboBox" min="-2" max="-2" attributes="0"/>
@@ -104,7 +104,7 @@
               <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="downloadPdfInvoice" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="226" max="32767" attributes="0"/>
+              <EmptySpace pref="246" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
