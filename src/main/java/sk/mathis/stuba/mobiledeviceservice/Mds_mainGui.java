@@ -15,13 +15,14 @@ import java.util.logging.Logger;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import static sk.mathis.stuba.equip.DataHelpers.conn;
 
 public class Mds_mainGui extends javax.swing.JFrame {
 
     public String[] services;
     public Mds_findSpecificDevicePanel findDevicePanel = null;
     public Mds_registerDevicePanel registerDevicePanel = null;
-    public Mds_repaireDevicePanel repairDevicePanel = null;
+    public Mds_repairDevicePanel repairDevicePanel = null;
     public Mds_sendDevicePanel sendDevicePanel = null;
     public Mds_testDevicePanel testDevicePanel = null;
 
@@ -30,7 +31,11 @@ public class Mds_mainGui extends javax.swing.JFrame {
         updateInfo();
         DataHelpers.initializeVariables();
         DataHelpers.createConnection();
-        updateOrderCount();
+        try {
+            updateOrderCount();
+        } catch (SQLException ex) {
+            Logger.getLogger(Mds_mainGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -180,7 +185,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
             }
             case 3: {
                 if (repairDevicePanel == null) {
-                    repairDevicePanel = new Mds_repaireDevicePanel();
+                    repairDevicePanel = new Mds_repairDevicePanel(this);
                 }
                 jTabbedPane1.addTab(services[1], repairDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
@@ -188,7 +193,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
             }
             case 4: {
                 if (sendDevicePanel == null) {
-                    sendDevicePanel = new Mds_sendDevicePanel();
+                    sendDevicePanel = new Mds_sendDevicePanel(this);
                 }
                 jTabbedPane1.addTab(services[2], sendDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
@@ -197,18 +202,18 @@ public class Mds_mainGui extends javax.swing.JFrame {
             case 1: {
 
                 if (findDevicePanel == null) {
-                    findDevicePanel = new Mds_findSpecificDevicePanel();
+                    findDevicePanel = new Mds_findSpecificDevicePanel(this);
                 }
                 jTabbedPane1.addTab(services[1], findDevicePanel);
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
             case 2: {
-                if(testDevicePanel == null){
+                if (testDevicePanel == null) {
                     testDevicePanel = new Mds_testDevicePanel(this);
                 }
                 jTabbedPane1.addTab(services[2], testDevicePanel);
-                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount()-1);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
         }
@@ -240,7 +245,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateInfo() {
         Date date = new Date();
         jTimeInfo.setText(date.toString());
-        services = new String[]{"Register Device", "Find specific registered device","Test device", "Repair device", "Send device" };
+        services = new String[]{"Register Device", "Find specific registered device", "Test device", "Repair device", "Send device"};
 
         jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(services));
 
@@ -250,10 +255,10 @@ public class Mds_mainGui extends javax.swing.JFrame {
         return jTabbedPane1;
     }
 
-    public void updateOrderCount() {
+    public void updateOrderCount() throws SQLException {
         ResultSet rs;
-        rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_service_order");
         try {
+            rs = DataHelpers.selectFrom("SELECT count(*) FROM mds_service_order");
             while (rs.next()) {
                 jRepairAmountInfo.setText(rs.getString(1));
             }

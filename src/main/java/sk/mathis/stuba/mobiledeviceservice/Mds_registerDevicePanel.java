@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static sk.mathis.stuba.equip.DataHelpers.conn;
 
 /**
  *
@@ -27,12 +28,15 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
     public ArrayList<String> registeredClaimantData;
     public ArrayList<String> registeredDeviceData;
     public ArrayList<String> order;
-    Map<Integer, DeviceModel> deviceModelMap;
-    Map<String, DeviceModel> deviceModelMapString;
-    Map<Integer, String> deviceVendorMap = new HashMap();
-    Integer claimantRegistered = 0;
-    Mds_mainGui gui;
-    private Integer foundPerson = null;
+    private Map<Integer, DeviceModel> deviceModelMap;
+    private Map<String, DeviceModel> deviceModelMapString;
+    private Map<Integer, String> deviceVendorMap = new HashMap();
+    private Integer claimantRegistered = 0;
+    private Long id_claimant = null;
+    private Long claimantId = null;
+    private Long deviceId = null;
+    private Mds_mainGui gui;
+    private Long foundPerson = null;
 
     public Mds_registerDevicePanel(Mds_mainGui gui) throws SQLException {
         this.gui = gui;
@@ -85,6 +89,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         jRegisterDeviceButton = new javax.swing.JButton();
         jDeviceVendorComboBox = new javax.swing.JComboBox();
         jDeviceModelComboBox = new javax.swing.JComboBox();
+        cancelOperation = new javax.swing.JButton();
 
         jLabel1.setText("Register Device Panel");
 
@@ -143,6 +148,13 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
 
         jDeviceModelComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        cancelOperation.setText("Cancel operation");
+        cancelOperation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelOperationActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -174,7 +186,9 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addComponent(jLabel1)
-                            .addGap(495, 495, 495))
+                            .addGap(372, 372, 372)
+                            .addComponent(cancelOperation)
+                            .addContainerGap())
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addGap(120, 120, 120)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,8 +221,13 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(cancelOperation)))
                 .addGap(75, 75, 75)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
@@ -286,8 +305,8 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "All arrays must be filled", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
             } else {
                 Mds_registerDeviceDataCollector collector = new Mds_registerDeviceDataCollector(registeredDeviceData);
-                collector.executeInsertDeviceData();
-
+                deviceId = collector.executeInsertDeviceData();
+                System.out.println(deviceId);
                 gui.getjTabbedPane1().removeTabAt(gui.getjTabbedPane1().getSelectedIndex());
                 gui.getjTabbedPane1().setSelectedIndex(0);
                 gui.remove(gui.registerDevicePanel);
@@ -297,29 +316,19 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
                 // order.add(new Date().toString());
                 order.add(jDeviceFault.getText());
 
-                Integer claimantid = null;
-                Integer deviceid = null;
+                if (foundPerson != null) {
+                    claimantId = foundPerson;
+                }
+
+                order.add(deviceId.toString());
+                order.add(claimantId.toString());
+                collector = new Mds_registerDeviceDataCollector(order);
+                collector.executeInsertOrderData();
                 try {
-                    ResultSet rs = DataHelpers.selectFrom("SELECT id_device FROM mds_device ORDER BY id_device DESC LIMIT 1");
-                    while (rs.next()) {
-                        deviceid = rs.getInt(1);
-                    }
-                    if (foundPerson != null) {
-                        claimantid = foundPerson;
-                    } else {
-                        rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant ORDER BY id_service_claimant DESC LIMIT 1");
-                        while (rs.next()) {
-                            claimantid = rs.getInt(1);
-                        }
-                    }
+                    gui.updateOrderCount();
                 } catch (SQLException ex) {
                     Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                order.add(deviceid.toString());
-                order.add(claimantid.toString());
-                collector = new Mds_registerDeviceDataCollector(order);
-                collector.executeInsertOrderData();
-                gui.updateOrderCount();
             }
         } else {
             JOptionPane.showMessageDialog(this, "The claimant must be filled first !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
@@ -352,18 +361,20 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         if (registeredClaimantData.contains("") || numberOK.equals(0)) {
             JOptionPane.showMessageDialog(this, "All arrays must be filled", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         } else {
-            ResultSet rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant where email = '" + jClaimantEmail.getText() + "' AND phone_number = '" + jClaimantPhone.getText() + "'");
             try {
+                ResultSet rs = DataHelpers.selectFrom("SELECT id_service_claimant FROM mds_service_claimant where email = '" + jClaimantEmail.getText() + "' AND phone_number = '" + jClaimantPhone.getText() + "'");
+
                 if (rs.next()) {
                     System.out.println("nasiel som cloveka");
-                    foundPerson = rs.getInt(1);
+                    foundPerson = rs.getLong(1);
                 } else {
                     Mds_registerDeviceDataCollector collector = new Mds_registerDeviceDataCollector(registeredClaimantData);
-                    collector.executeInsertClaimantData();
+                    claimantId = collector.executeInsertClaimantData();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } 
+            
             registerButton.setEnabled(false);
             claimantRegistered = 1;
             jRegisterDeviceButton.setEnabled(true);
@@ -376,6 +387,21 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
 
 
     }//GEN-LAST:event_registerButtonActionPerformed
+
+    private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
+        if (claimantRegistered.equals(1)) {
+            try {
+                DataHelpers.deleteRow("DELETE  FROM mds_service_claimant WHERE id_service_claimant ='" + claimantId + "'");
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+                Logger.getLogger(Mds_registerDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+        gui.getjTabbedPane1().setSelectedIndex(0);
+        gui.remove(gui.registerDevicePanel);
+        gui.registerDevicePanel = null;
+    }//GEN-LAST:event_cancelOperationActionPerformed
     public void setComboBoxes() throws SQLException {
         jClaimantLegalTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"person", "freelancer", "company"}));
         jDeviceTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"phone", "tablet", "camera"}));
@@ -384,11 +410,13 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         deviceModelMapString = new HashMap<String, DeviceModel>();
 
         ResultSet rs = DataHelpers.selectFrom("SELECT * FROM `mds_device_model`");
+
         while (rs.next()) {
             deviceModelMap.put(rs.getInt(1), new DeviceModel(rs.getString(2), rs.getInt(3), rs.getInt(1)));
             deviceModelMapString.put(rs.getString(2), new DeviceModel(rs.getString(2), rs.getInt(3), rs.getInt(1)));
         }
         rs = DataHelpers.selectFrom("SELECT * FROM `mds_device_vendor`");
+
         while (rs.next()) {
             deviceVendorMap.put(rs.getInt(1), rs.getString(2));
         }
@@ -412,6 +440,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelOperation;
     private javax.swing.JTextField jClaimantAdress;
     private javax.swing.JTextField jClaimantCity;
     private javax.swing.JTextField jClaimantCountry;

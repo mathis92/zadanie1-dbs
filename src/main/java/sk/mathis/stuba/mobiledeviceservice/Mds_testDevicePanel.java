@@ -9,12 +9,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import sk.mathis.stuba.data.Mds_testDeviceDataCollector;
+import sk.mathis.stuba.device.DeviceModel;
 import sk.mathis.stuba.equip.DataHelpers;
 import sk.mathis.stuba.equip.TestTypes;
 
@@ -27,11 +30,13 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     private Mds_testDeviceDataCollector collector;
     private ArrayList<JFormattedTextField> testResults = new ArrayList<JFormattedTextField>();
     private ArrayList<TestTypes> testTypesList = new ArrayList<TestTypes>();
-    private Integer id_testing = null;
+    private Long id_testing = null;
     private String idTestedDevice = null;
     private Mds_mainGui gui;
+
     public Mds_testDevicePanel(Mds_mainGui gui) {
         initComponents();
+        setDiagnosticianComboBox();
         this.gui = gui;
         collector = new Mds_testDeviceDataCollector(this);
     }
@@ -64,8 +69,9 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         stabilityTestField = new javax.swing.JFormattedTextField();
         submitTestsButton = new javax.swing.JButton();
         chooseDeviceToTest = new javax.swing.JButton();
-        diagnosticianId = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
+        cancelOperation = new javax.swing.JButton();
+        diagnosticianIdComboBox = new javax.swing.JComboBox();
 
         setMinimumSize(new java.awt.Dimension(1100, 650));
 
@@ -207,12 +213,34 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
 
         jLabel3.setText("Diagnostician id");
 
+        cancelOperation.setText("Cancel operation");
+        cancelOperation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelOperationActionPerformed(evt);
+            }
+        });
+
+        diagnosticianIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(480, 480, 480)
+                .addComponent(submitTestsButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(496, 496, 496)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -242,13 +270,13 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(78, 78, 78)
-                                        .addComponent(chooseDeviceToTest))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel3)
                                         .addGap(18, 18, 18)
-                                        .addComponent(diagnosticianId, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(75, 75, 75)
+                                        .addComponent(chooseDeviceToTest)))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,79 +287,91 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(speakerTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
                                     .addComponent(batteryTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
-                                    .addComponent(chargingTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(496, 496, 496)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel2)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addComponent(chargingTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(cancelOperation)))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(480, 480, 480)
-                .addComponent(submitTestsButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addContainerGap()
+                .addComponent(cancelOperation)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(162, 162, 162))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(displayTest)
-                            .addComponent(displayTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cameraTest)
-                            .addComponent(cameraTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(memoryTest)
-                            .addComponent(memoryTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(speakerTest)
-                            .addComponent(speakerTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(batteryTest)
-                            .addComponent(batteryTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(chargingTest)
-                            .addComponent(chargingTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(sensorTest)
-                            .addComponent(sensorsTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(stabilityTest)
-                            .addComponent(stabilityTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(42, 42, 42)
-                        .addComponent(submitTestsButton)
-                        .addGap(28, 28, 28))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(diagnosticianId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(75, 75, 75)
-                        .addComponent(chooseDeviceToTest)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chooseDeviceToTest))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(displayTest)
+                    .addComponent(displayTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cameraTest)
+                    .addComponent(cameraTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(memoryTest)
+                    .addComponent(memoryTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(speakerTest)
+                    .addComponent(speakerTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(batteryTest)
+                    .addComponent(batteryTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chargingTest)
+                    .addComponent(chargingTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sensorTest)
+                    .addComponent(sensorsTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(stabilityTest)
+                    .addComponent(stabilityTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(42, 42, 42)
+                .addComponent(submitTestsButton)
+                .addGap(28, 28, 28))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    public void setDiagnosticianComboBox() {
+        Map<Integer, String> diagnosticianMap = new HashMap<Integer, String>();
+        ResultSet rs;
+        try {
+            rs = DataHelpers.selectFrom("SELECT * FROM `mds_diagnostician`");
+
+            while (rs.next()) {
+                diagnosticianMap.put(rs.getInt(1), rs.getString(2));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Mds_testDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String[] vendorString = new String[diagnosticianMap.size()];
+        for (int i = 1; i <= diagnosticianMap.size(); i++) {
+            vendorString[i - 1] = diagnosticianMap.get(i);
+        }
+        diagnosticianIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(vendorString));
+    }
+
 
     private void devicesToTestTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_devicesToTestTableMouseClicked
         collector.fillSelectedDeviceTable(devicesToTestTable.getSelectedRow());
@@ -371,67 +411,70 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cameraTestFieldActionPerformed
 
     private void submitTestsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitTestsButtonActionPerformed
-        if(batteryTest.isSelected()){
-            testTypesList.add(TestTypes.BATTERY);
-            testResults.add(batteryTestField);
+        try {
+            if (batteryTest.isSelected()) {
+                testTypesList.add(TestTypes.BATTERY);
+                testResults.add(batteryTestField);
+            }
+            if (cameraTest.isSelected()) {
+                testTypesList.add(TestTypes.CAMERA);
+                testResults.add(cameraTestField);
+            }
+            if (chargingTest.isSelected()) {
+                testTypesList.add(TestTypes.CHARGING);
+                testResults.add(chargingTestField);
+            }
+            if (displayTest.isSelected()) {
+                testTypesList.add(TestTypes.DISPLAY);
+                testResults.add(displayTestField);
+            }
+            if (memoryTest.isSelected()) {
+                testTypesList.add(TestTypes.MEMORY);
+                testResults.add(memoryTestField);
+            }
+            if (sensorTest.isSelected()) {
+                testTypesList.add(TestTypes.SENSORS);
+                testResults.add(sensorsTestField);
+            }
+            if (stabilityTest.isSelected()) {
+                testTypesList.add(TestTypes.STABILITY);
+                testResults.add(stabilityTestField);
+            }
+            if (speakerTest.isSelected()) {
+                testTypesList.add(TestTypes.SPEAKER);
+                testResults.add(speakerTestField);
+            }
+            collector.fillTests(testTypesList, testResults, id_testing);
+            DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
+            DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing + "'");
+            collector.fillDiagnosisTable(Integer.parseInt(idTestedDevice));
+            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+            gui.getjTabbedPane1().setSelectedIndex(0);
+            gui.remove(gui.testDevicePanel);
+            gui.testDevicePanel = null;
+        } catch (SQLException ex) {
+            Logger.getLogger(Mds_testDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(cameraTest.isSelected()){
-            testTypesList.add(TestTypes.CAMERA);
-            testResults.add(cameraTestField);
-        }
-        if(chargingTest.isSelected()){
-            testTypesList.add(TestTypes.CHARGING);
-            testResults.add(chargingTestField);
-        }
-        if(displayTest.isSelected()){
-            testTypesList.add(TestTypes.DISPLAY);
-            testResults.add(displayTestField);
-        }
-        if(memoryTest.isSelected()){
-            testTypesList.add(TestTypes.MEMORY);
-            testResults.add(memoryTestField);
-        }
-        if(sensorTest.isSelected()){
-            testTypesList.add(TestTypes.SENSORS);
-            testResults.add(sensorsTestField);
-        }
-        if(stabilityTest.isSelected()){
-            testTypesList.add(TestTypes.STABILITY);
-            testResults.add(stabilityTestField);
-        }
-        if(speakerTest.isSelected()){
-            testTypesList.add(TestTypes.SPEAKER);
-            testResults.add(speakerTestField);
-        }
-        collector.fillTests(testTypesList, testResults, id_testing);
-        DataHelpers.updateRow("UPDATE mds_device SET tested=1 WHERE id_device = '" + idTestedDevice + "'");
-        DataHelpers.updateRow("UPDATE mds_testing SET end_time= CURRENT_TIMESTAMP WHERE id_testing = '" + id_testing +"'");
-        collector.fillDiagnosisTable();
-        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
-        gui.getjTabbedPane1().setSelectedIndex(0);
-        gui.remove(gui.testDevicePanel);
-        gui.testDevicePanel = null;
-        
+
     }//GEN-LAST:event_submitTestsButtonActionPerformed
 
     private void chooseDeviceToTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDeviceToTestActionPerformed
         ArrayList<String> testingInfo = new ArrayList<String>();
         //testingInfo.add(new Date());
-        
-        testingInfo.add(diagnosticianId.getText());
-        idTestedDevice = (String)SelectedDeviceTable.getModel().getValueAt(0, 0);
+        Integer diagId = diagnosticianIdComboBox.getSelectedIndex()+1;
+        testingInfo.add(diagId.toString());
+        idTestedDevice = (String) SelectedDeviceTable.getModel().getValueAt(0, 0);
         testingInfo.add(idTestedDevice);
-        DataHelpers.insertFromArray(testingInfo, "mds_testing", DataHelpers.mds_testing);
-        ResultSet rs = DataHelpers.selectFrom("SELECT id_testing FROM mds_testing ORDER BY id_testing DESC LIMIT 1");
-        try {
-            while(rs.next()){
-                id_testing = rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Mds_testDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        id_testing = DataHelpers.insertFromArray(testingInfo, "mds_testing", DataHelpers.mds_testing);
         System.out.println(testingInfo);
     }//GEN-LAST:event_chooseDeviceToTestActionPerformed
+
+    private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
+        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+        gui.getjTabbedPane1().setSelectedIndex(0);
+        gui.remove(gui.testDevicePanel);
+        gui.testDevicePanel = null;
+    }//GEN-LAST:event_cancelOperationActionPerformed
 
     public JTable getDevicesToTestTable() {
         return devicesToTestTable;
@@ -448,11 +491,12 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField batteryTestField;
     private javax.swing.JCheckBox cameraTest;
     private javax.swing.JFormattedTextField cameraTestField;
+    private javax.swing.JButton cancelOperation;
     private javax.swing.JCheckBox chargingTest;
     private javax.swing.JFormattedTextField chargingTestField;
     private javax.swing.JButton chooseDeviceToTest;
     private javax.swing.JTable devicesToTestTable;
-    private javax.swing.JFormattedTextField diagnosticianId;
+    private javax.swing.JComboBox diagnosticianIdComboBox;
     private javax.swing.JCheckBox displayTest;
     private javax.swing.JFormattedTextField displayTestField;
     private javax.swing.JLabel jLabel1;

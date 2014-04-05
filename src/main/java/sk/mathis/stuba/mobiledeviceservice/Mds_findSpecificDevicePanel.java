@@ -7,7 +7,6 @@ package sk.mathis.stuba.mobiledeviceservice;
 
 import javax.swing.table.DefaultTableModel;
 import sk.mathis.stuba.data.Mds_findSpecificDeviceDataCollector;
-import sk.mathis.stuba.data.Mds_findSpecificDeviceFaultPrint;
 import sk.mathis.stuba.equip.FindingTypes;
 
 /**
@@ -18,9 +17,10 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
     private String findingMask = null;
     private FindingTypes findingType = null;
-
-    public Mds_findSpecificDevicePanel() {
+    private Mds_mainGui gui;
+    public Mds_findSpecificDevicePanel(Mds_mainGui gui) {
         initComponents();
+        this.gui = gui;
     }
 
     /**
@@ -47,11 +47,10 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
         jFindSpecificDevice = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jClaimantData = new javax.swing.JTable();
+        cancelOperation = new javax.swing.JButton();
 
         jDialog1.setEnabled(false);
-        jDialog1.setMaximumSize(new java.awt.Dimension(700, 450));
         jDialog1.setMinimumSize(new java.awt.Dimension(700, 450));
-        jDialog1.setPreferredSize(new java.awt.Dimension(700, 450));
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -185,6 +184,13 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
             jClaimantData.getColumnModel().getColumn(7).setResizable(false);
         }
 
+        cancelOperation.setText("Cancel operation");
+        cancelOperation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelOperationActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -195,23 +201,23 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(316, 316, 316)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(483, 483, 483)
-                                .addComponent(jLabel2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(316, 316, 316)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel7))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jFindUsingIMEI, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                                        .addComponent(jFindUsingEmail))
-                                    .addComponent(jFindUsingPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 342, Short.MAX_VALUE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jFindUsingIMEI, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                                .addComponent(jFindUsingEmail))
+                            .addComponent(jFindUsingPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 342, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(483, 483, 483)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cancelOperation)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -226,8 +232,13 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(cancelOperation)))
                 .addGap(102, 102, 102)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -293,8 +304,17 @@ public class Mds_findSpecificDevicePanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jDeviceDataMouseClicked
 
+    private void cancelOperationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelOperationActionPerformed
+        gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+        gui.getjTabbedPane1().setSelectedIndex(0);
+        gui.remove(gui.findDevicePanel);
+        gui.findDevicePanel = null;
+
+    }//GEN-LAST:event_cancelOperationActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelOperation;
     private javax.swing.JTable jClaimantData;
     private javax.swing.JTable jDeviceData;
     private javax.swing.JDialog jDialog1;

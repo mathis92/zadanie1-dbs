@@ -21,15 +21,18 @@ public class Mds_registerDeviceDataCollector {
 
     }
 
-    public void executeInsertClaimantData() {
+    public Long executeInsertClaimantData() {
         System.out.println(dataList);
-        DataHelpers.insertFromArray(dataList, "mds_service_claimant", DataHelpers.mds_service_claimant);
-
+        Long idClaimant;
+        idClaimant = DataHelpers.insertFromArray(dataList, "mds_service_claimant", DataHelpers.mds_service_claimant);
+        return idClaimant;
     }
 
-    public void executeInsertDeviceData() {
+    public Long executeInsertDeviceData() {
         System.out.println(dataList);
-        DataHelpers.insertFromArray(dataList, "mds_device", DataHelpers.mds_device);
+        Long idDevice;
+        idDevice = DataHelpers.insertFromArray(dataList, "mds_device", DataHelpers.mds_device);
+        return idDevice;
     }
     
     public void executeInsertOrderData(){

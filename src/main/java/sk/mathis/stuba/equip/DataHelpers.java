@@ -26,6 +26,9 @@ public class DataHelpers {
     public static ArrayList<String> mds_service_order = new ArrayList<String>();
     public static ArrayList<String> mds_testing = new ArrayList<String>();
     public static ArrayList<String> mds_test = new ArrayList<String>();
+    public static ArrayList<String> mds_diagnosis = new ArrayList<String>();
+    public static ArrayList<String> mds_repair = new ArrayList<String>();
+    public static ArrayList<String> mds_sent_devices = new ArrayList<String>();
     public static Connection conn;
 
     public static void initializeVariables() {
@@ -49,71 +52,86 @@ public class DataHelpers {
         mds_test.add("type");
         mds_test.add("id_testing");
         mds_test.add("found_fault");
-
+        mds_diagnosis.add("id_device");
+        mds_diagnosis.add("specification");
+        mds_diagnosis.add("id_diagnostician");
+        mds_repair.add("id_diagnostician");
+        mds_repair.add("id_diagnosis");
+        mds_sent_devices.add("id_repair");
+        mds_sent_devices.add("id_diagnostician");
     }
 
-    public static void createConnection(){
+    public static void createConnection() {
         try {
-            //Connection conn;
-
             String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
             conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+            conn.setAutoCommit(false);
         } catch (SQLException ex) {
             Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    public static ResultSet selectFrom(String line) {
+
+    public static ResultSet selectFrom(String line) throws SQLException {
         ResultSet rs = null;
         try {
-
-          //  Connection conn;
-
-           // String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-           // conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+            
             Statement stmt = (Statement) conn.createStatement();
             rs = stmt.executeQuery(line);
-
+            conn.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        }
+        } 
+        
         return rs;
     }
 
-    public static void updateRow(String line) {
+    public static void updateRow(String line) throws SQLException {
         try {
-          //  Connection conn;
-            
-         //   String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-         //   conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+
             Statement stmt = (Statement) conn.createStatement();
             stmt.executeUpdate(line);
+            conn.commit();
             System.out.println(line);
         } catch (SQLException ex) {
             System.out.println(ex);
             Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
-    public static void insertInto(String line) {
-
+    public static void deleteRow(String line) throws SQLException {
         try {
 
-       //     Connection conn;
-
-      //      String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-      //      conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
             Statement stmt = (Statement) conn.createStatement();
-            System.out.println(line);
             stmt.executeUpdate(line);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+            conn.commit();
+            System.out.println(line);
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        }   
     }
 
-    public static void insertFromArray(ArrayList<String> arrayList, String table, ArrayList<String> collumnList) {
+    public static Long insertInto(String line) throws SQLException {
+        ResultSet generatedKey = null;
+        Long id = null;
+        try {
+
+            Statement stmt = (Statement) conn.createStatement();
+            System.out.println(line);
+            stmt.executeUpdate(line, Statement.RETURN_GENERATED_KEYS);
+            generatedKey = stmt.getGeneratedKeys();
+            while(generatedKey.next()){
+                id = generatedKey.getLong(1);
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } 
+        return id;
+    }
+
+    public static Long insertFromArray(ArrayList<String> arrayList, String table, ArrayList<String> collumnList) {
+        Long generatedKey = null;
         String line = "INSERT INTO `" + table + "`" + "(";
         for (int i = 0; i < collumnList.size(); i++) {
             line += "`" + collumnList.get(i) + "`";
@@ -133,8 +151,13 @@ public class DataHelpers {
             i++;
         }
         line += "')";
-
-        DataHelpers.insertInto(line);
+        try {
+            generatedKey = DataHelpers.insertInto(line);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+            Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return generatedKey;
     }
 
 }
