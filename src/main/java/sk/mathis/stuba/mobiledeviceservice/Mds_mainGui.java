@@ -25,6 +25,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public Mds_sendDevicePanel sendDevicePanel = null;
     public Mds_testDevicePanel testDevicePanel = null;
     public Mds_fullListingPanel listingPanel = null;
+    public Mds_editRepairableDevices editRepairableDevices = null;
 
     public Mds_mainGui() {
         initComponents();
@@ -226,6 +227,14 @@ public class Mds_mainGui extends javax.swing.JFrame {
                 jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
                 break;
             }
+            case 5: {
+                if (editRepairableDevices == null) {
+                    editRepairableDevices = new Mds_editRepairableDevices(this);
+                }
+                jTabbedPane1.addTab(services[5], editRepairableDevices);
+                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                break;
+            }
 
         }
 
@@ -256,7 +265,7 @@ public class Mds_mainGui extends javax.swing.JFrame {
     public void updateInfo() {
         Date date = new Date();
         jTimeInfo.setText(date.toString());
-        services = new String[]{"Register Device", "Find specific registered device", "Test device", "Repair device", "Send device"};
+        services = new String[]{"Register Device", "Find specific registered device", "Test device", "Repair device", "Send device","Edit Repairable Devices"};
 
         jWhatToDo.setModel(new javax.swing.DefaultComboBoxModel(services));
 

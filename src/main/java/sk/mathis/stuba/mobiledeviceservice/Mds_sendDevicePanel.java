@@ -5,6 +5,13 @@
  */
 package sk.mathis.stuba.mobiledeviceservice;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import sk.mathis.stuba.data.Mds_sendDeviceDataCollector;
 import sk.mathis.stuba.equip.DataHelpers;
+import sk.mathis.stuba.equip.Invoice;
 
 public class Mds_sendDevicePanel extends javax.swing.JPanel {
 
@@ -120,6 +128,11 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         jScrollPane3.setViewportView(reportTextArea);
 
         downloadPdfInvoice.setText("Download pdf invoice ");
+        downloadPdfInvoice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadPdfInvoiceActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -281,6 +294,19 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_chooseDeviceToSendActionPerformed
 
+    private void downloadPdfInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadPdfInvoiceActionPerformed
+
+        Invoice inv =  new Invoice();
+        try {
+            inv.createPdf((Integer)id_repair.intValue());
+        } catch (DocumentException ex) {
+            Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_downloadPdfInvoiceActionPerformed
+
     public JTable getDevicesToSendTable() {
         return devicesToSendTable;
     }
@@ -288,7 +314,6 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
     public JTable getSelectedDeviceTable() {
         return SelectedDeviceTable;
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable SelectedDeviceTable;

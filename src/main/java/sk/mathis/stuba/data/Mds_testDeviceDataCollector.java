@@ -95,6 +95,9 @@ public class Mds_testDeviceDataCollector {
                     for (int i = 0; i < 5; i++) {
 
                         data[i] = rs.getString(i + 1);
+                        if (i == 4) {
+                            testPanel.getFaultTextArea().setText(rs.getString(i+1));
+                        }
                     }
                     selectedDevice.addRow(data);
                     testPanel.getSelectedDeviceTable().setModel(selectedDevice);

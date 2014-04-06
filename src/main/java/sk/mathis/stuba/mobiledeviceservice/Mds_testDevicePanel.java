@@ -17,6 +17,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import sk.mathis.stuba.data.Mds_testDeviceDataCollector;
 import sk.mathis.stuba.device.DeviceModel;
 import sk.mathis.stuba.equip.DataHelpers;
@@ -74,6 +75,8 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         cancelOperation = new javax.swing.JButton();
         diagnosticianIdComboBox = new javax.swing.JComboBox();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        faultTextArea = new javax.swing.JTextArea();
 
         setEnabled(false);
         setMinimumSize(new java.awt.Dimension(1100, 650));
@@ -243,48 +246,44 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
 
         diagnosticianIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(200, 15));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(200, 15));
+
+        faultTextArea.setColumns(20);
+        faultTextArea.setRows(5);
+        faultTextArea.setMinimumSize(new java.awt.Dimension(200, 15));
+        jScrollPane3.setViewportView(faultTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(480, 480, 480)
-                .addComponent(submitTestsButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(496, 496, 496)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel2)))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(displayTest)
-                                .addGap(103, 103, 103)
-                                .addComponent(displayTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cameraTest)
-                                .addGap(99, 99, 99)
-                                .addComponent(cameraTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addGap(425, 425, 425)
+                                .addComponent(cancelOperation))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(memoryTest)
                                 .addGap(99, 99, 99)
                                 .addComponent(memoryTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(sensorTest)
-                                .addGap(99, 99, 99)
-                                .addComponent(sensorsTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(stabilityTest)
                                 .addGap(99, 99, 99)
                                 .addComponent(stabilityTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cameraTest)
+                                    .addComponent(displayTest))
+                                .addGap(99, 99, 99)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(displayTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
+                                    .addComponent(cameraTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
@@ -303,40 +302,53 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(chargingTest)
                                     .addComponent(batteryTest)
-                                    .addComponent(speakerTest))
+                                    .addComponent(speakerTest)
+                                    .addComponent(sensorTest))
                                 .addGap(93, 93, 93)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(speakerTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
                                     .addComponent(batteryTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)
-                                    .addComponent(chargingTestField, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(cancelOperation)))))
+                                    .addComponent(chargingTestField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(sensorsTestField, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(480, 480, 480)
+                                .addComponent(submitTestsButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(cancelOperation)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelOperation)
+                    .addComponent(jLabel1))
+                .addGap(4, 4, 4)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(162, 162, 162))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(diagnosticianIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(171, 171, 171)
+                        .addComponent(chooseDeviceToTest))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(chooseDeviceToTest))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(displayTest)
                     .addComponent(displayTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -368,7 +380,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(stabilityTest)
                     .addComponent(stabilityTestField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(42, 42, 42)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(submitTestsButton)
                 .addGap(28, 28, 28))
         );
@@ -415,7 +427,7 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
 
     private void devicesToTestTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_devicesToTestTableMouseClicked
         collector.fillSelectedDeviceTable(devicesToTestTable.getSelectedRow());
-
+        
     }//GEN-LAST:event_devicesToTestTableMouseClicked
 
     private void memoryTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memoryTestActionPerformed
@@ -575,6 +587,10 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
         return SelectedDeviceTable;
     }
 
+    public JTextArea getFaultTextArea() {
+        return faultTextArea;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable SelectedDeviceTable;
@@ -590,11 +606,13 @@ public class Mds_testDevicePanel extends javax.swing.JPanel {
     private javax.swing.JComboBox diagnosticianIdComboBox;
     private javax.swing.JCheckBox displayTest;
     private javax.swing.JFormattedTextField displayTestField;
+    private javax.swing.JTextArea faultTextArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JCheckBox memoryTest;
     private javax.swing.JFormattedTextField memoryTestField;
     private javax.swing.JCheckBox sensorTest;
