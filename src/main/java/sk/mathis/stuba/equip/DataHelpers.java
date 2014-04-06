@@ -68,7 +68,7 @@ public class DataHelpers {
     public static void createConnection() {
         try {
             String ConUrl = "jdbc:mysql://localhost/MobileDeviceService";
-            conn = (Connection) DriverManager.getConnection(ConUrl, "root", "Pe605321101992");
+            conn = (Connection) DriverManager.getConnection(ConUrl, "root", "root");
             conn.setAutoCommit(false);
         } catch (SQLException ex) {
             Logger.getLogger(DataHelpers.class.getName()).log(Level.SEVERE, null, ex);

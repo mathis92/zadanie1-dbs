@@ -11,6 +11,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -18,9 +19,9 @@ import java.util.logging.Logger;
 
 public class Invoice {
 
-    public static  String RESULT = "F:\\Moje dokumenty\\Martin HUdec\\škola\\FIIT\\4. sem\\DBS\\MobileDeviceService\\src\\main\\java\\sk\\mathis\\stuba\\invoices\\invoice";
+    public static String RESULT = "F:\\Moje dokumenty\\Martin HUdec\\škola\\FIIT\\4. sem\\DBS\\MobileDeviceService\\src\\main\\java\\sk\\mathis\\stuba\\invoices\\invoice";
 
-    public void createPdf(Integer id_repair) throws DocumentException, FileNotFoundException {
+    public void createPdf(Integer id_repair) throws DocumentException, FileNotFoundException, IOException, InterruptedException {
         Document document = new Document();
         setRESULT(id_repair);
         PdfWriter.getInstance(document, new FileOutputStream(RESULT));
@@ -31,9 +32,9 @@ public class Invoice {
         document.add(new Paragraph("Personal informations :"));
         try {
             ResultSet rs;
-            rs = DataHelpers.selectFrom("SELECT name,adress,email,phone_number,registration_date,fault_description,imei,model,vendor,report,repair_costs,sent_date FROM (SELECT mds_service_claimant.name,mds_service_claimant.adress,mds_service_claimant.email,mds_service_claimant.phone_number,mds_service_order.registration_date,mds_service_order.fault_description,mds_service_order.device_sent,mds_device.tested,mds_device.repaired,mds_device.`type`,mds_device.id_device ,mds_device.imei,mds_device_model.model,mds_device_vendor.vendor,mds_diagnosis.specification,mds_repair.report,mds_repair.repair_costs,mds_repair.id_repair,mds_sent_devices.sent_date\n"
+            rs = DataHelpers.selectFrom("SELECT name,adress,email,phone_number,registration_date,fault_description,imei,model,vendor,report,repair_costs,sent_date FROM (SELECT mds_service_claimant.name,mds_service_claimant.adress,mds_service_claimant.email,mds_service_claimant.phone_number,mds_service_order.registration_date,mds_service_order.fault_description,mds_service_order.device_sent,mds_device.tested,mds_device.repaired,mds_device.`type`,mds_device.id_device ,mds_device.imei,mds_device_model.model,mds_device_vendor.vendor,mds_diagnosis.specification,mds_repair.report,mds_repair.repair_costs,mds_repair.id_repair,`mds_sent_devices`.sent_date\n"
                     + "FROM mds_service_claimant\n"
-                    + "LEFT JOIN mds_service_order\n"
+                    + "	LEFT JOIN mds_service_order\n"
                     + "		ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant\n"
                     + "	LEFT JOIN mds_device\n"
                     + "		ON mds_service_order.id_device = mds_device.id_device\n"
@@ -45,11 +46,13 @@ public class Invoice {
                     + "		ON mds_device.id_device = mds_diagnosis.id_device\n"
                     + "	LEFT JOIN mds_repair\n"
                     + "		ON mds_diagnosis.id_diagnosis = mds_repair.id_diagnosis\n"
-                    + "		LEFT JOIN mds_sent_devices\n"
+                    + "	LEFT JOIN mds_sent_devices\n"
                     + "		ON mds_repair.id_repair = mds_sent_devices.id_repair  \n"
-                    + "		LEFT JOIN mds_invoice \n"
+                    + "	LEFT JOIN mds_invoice \n"
                     + "		ON mds_invoice.id_repair = mds_repair.id_repair\n"
-                    + "		ORDER BY id_device ASC) AS `table1` WHERE  table1.id_repair ='" + id_repair + "'");
+                    + "	GROUP BY (imei)\n"
+                    + "	ORDER BY id_device ASC) AS `table1` WHERE  table1.id_repair ='" + id_repair + "'");
+
             while (rs.next()) {
                 for (int i = 0; i < 12; i++) {
                     if (i == 4) {
@@ -57,27 +60,27 @@ public class Invoice {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Registration Date :"));
                     }
-                    if(i == 5){
+                    if (i == 5) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Fault :"));
                     }
-                    if(i == 6){
+                    if (i == 6) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("IMEI :"));
                     }
-                    if(i == 7){
+                    if (i == 7) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Device type :"));
                     }
-                    if(i == 9){
+                    if (i == 9) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Repair report :"));
                     }
-                    if(i == 10){
+                    if (i == 10) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Repair costs : "));
                     }
-                    if(i == 11){
+                    if (i == 11) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Send back date : "));
                     }
@@ -88,11 +91,14 @@ public class Invoice {
         } catch (SQLException ex) {
             Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         document.close();
+        Process p = Runtime
+                .getRuntime()
+                .exec("rundll32 url.dll,FileProtocolHandler c:\\" +RESULT);
+        p.waitFor();
     }
-    
-    public void setRESULT(Integer id_repair){
-        RESULT = RESULT + id_repair + ".pdf"; 
+
+    public void setRESULT(Integer id_repair) {
+        RESULT = RESULT + id_repair + ".pdf";
     }
 }

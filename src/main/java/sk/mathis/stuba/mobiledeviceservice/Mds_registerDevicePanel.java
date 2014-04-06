@@ -427,6 +427,7 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
         rs = DataHelpers.selectFrom("SELECT * FROM `mds_device_vendor`");
 
         while (rs.next()) {
+            System.out.println(rs.getInt(1) + " " +rs.getString(2));
             deviceVendorMap.put(rs.getInt(1), rs.getString(2));
         }
         String[] vendorString = new String[deviceVendorMap.size()];
@@ -438,9 +439,12 @@ public class Mds_registerDevicePanel extends javax.swing.JPanel {
     }
 
     public void changeModelBox() {
+               
         Integer index = jDeviceVendorComboBox.getSelectedIndex() + 1;
+        System.out.println(index);
         Vector<String> modelList = new Vector<String>();
         for (int i = 0; i < deviceModelMap.size(); i++) {
+            System.out.println(i+1 + " " + deviceModelMap.get(i+1).getModelVendorId());
             if (deviceModelMap.get(i + 1).getModelVendorId().equals(index)) {
                 modelList.add(deviceModelMap.get(i + 1).getModelName());
             }

@@ -31,6 +31,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
     private Mds_sendDeviceDataCollector collector;
     Long id_repair = null;
     Double id_repair_costs = null;
+    private Integer deviceSent = 0;
 
     public Mds_sendDevicePanel(Mds_mainGui gui) {
         initComponents();
@@ -245,6 +246,7 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                     + "	ON mds_device_model.id_device_vendor = mds_device_vendor.id_device_vendor) AS `table1`\n"
                     + "WHERE table1.device_sent = 0) AS `table2` \n"
                     + "WHERE id_device = '" + devicesToSendTable.getValueAt(devicesToSendTable.getSelectedRow(), 0) + "'");
+            deviceSent = 1;
             while (rs.next()) {
                 reportTextArea.setText(rs.getString(1));
             }
@@ -289,22 +291,34 @@ public class Mds_sendDevicePanel extends javax.swing.JPanel {
                 Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             DataHelpers.insertFromArray(invoiceData, "mds_invoice", DataHelpers.mds_invoice);
+            chooseDeviceToSend.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(this, "You have to choose device to send !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_chooseDeviceToSendActionPerformed
 
     private void downloadPdfInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadPdfInvoiceActionPerformed
-
-        Invoice inv =  new Invoice();
-        try {
-            inv.createPdf((Integer)id_repair.intValue());
-        } catch (DocumentException ex) {
-            Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+        if (deviceSent.equals(1)) {
+            Invoice inv = new Invoice();
+            try {
+                inv.createPdf((Integer) id_repair.intValue());
+            } catch (DocumentException ex) {
+                Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Mds_sendDevicePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          
+            gui.getjTabbedPane1().remove(gui.getjTabbedPane1().getSelectedIndex());
+            gui.getjTabbedPane1().setSelectedIndex(0);
+            gui.remove(gui.sendDevicePanel);
+            gui.sendDevicePanel = null;
+        } else {
+            JOptionPane.showMessageDialog(this, "You have to choose device to send !", "Notification !!!!", JOptionPane.WARNING_MESSAGE);
         }
-
     }//GEN-LAST:event_downloadPdfInvoiceActionPerformed
 
     public JTable getDevicesToSendTable() {
