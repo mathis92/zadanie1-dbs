@@ -32,7 +32,7 @@ public class Invoice {
         document.add(new Paragraph("Personal informations :"));
         try {
             ResultSet rs;
-            rs = DataHelpers.selectFrom("SELECT name,adress,email,phone_number,registration_date,fault_description,imei,model,vendor,report,repair_costs,sent_date FROM (SELECT mds_service_claimant.name,mds_service_claimant.adress,mds_service_claimant.email,mds_service_claimant.phone_number,mds_service_order.registration_date,mds_service_order.fault_description,mds_service_order.device_sent,mds_device.tested,mds_device.repaired,mds_device.`type`,mds_device.id_device ,mds_device.imei,mds_device_model.model,mds_device_vendor.vendor,mds_diagnosis.specification,mds_repair.report,mds_repair.repair_costs,mds_repair.id_repair,`mds_sent_devices`.sent_date\n"
+            rs = DataHelpers.selectFrom("SELECT name,adress,email,phone_number,registration_date,fault_description,imei,model,vendor,report,repair_costs,sent_date,effected FROM (SELECT mds_service_claimant.name,mds_service_claimant.adress,mds_service_claimant.email,mds_service_claimant.phone_number,mds_service_order.registration_date,mds_service_order.fault_description,mds_service_order.device_sent,mds_device.tested,mds_device.repaired,mds_device.`type`,mds_device.id_device ,mds_device.imei,mds_device_model.model,mds_device_vendor.vendor,mds_diagnosis.specification,mds_repair.report,mds_repair.repair_costs,mds_repair.id_repair,`diags`.`effected`,`mds_sent_devices`.sent_date\n"
                     + "FROM mds_service_claimant\n"
                     + "	LEFT JOIN mds_service_order\n"
                     + "		ON mds_service_claimant.id_service_claimant = mds_service_order.id_claimant\n"
@@ -50,11 +50,29 @@ public class Invoice {
                     + "		ON mds_repair.id_repair = mds_sent_devices.id_repair  \n"
                     + "	LEFT JOIN mds_invoice \n"
                     + "		ON mds_invoice.id_repair = mds_repair.id_repair\n"
+                    + "	LEFT JOIN (SELECT GROUP_CONCAT(diagT.name,' , ',diagR.name ,' , ' ,diagD.name) AS `effected`, mds_device.id_device\n"
+                    + "			FROM mds_device \n"
+                    + "		LEFT JOIN mds_testing AS testing\n"
+                    + "			ON mds_device.id_device = testing.id_device  \n"
+                    + "		LEFT JOIN mds_diagnostician AS diagT\n"
+                    + "			ON testing.id_head_diagnostician = diagT.id_diagnostician\n"
+                    + "		LEFT JOIN mds_diagnosis AS diagnosis\n"
+                    + "			ON mds_device.id_device = diagnosis.id_device\n"
+                    + "		LEFT JOIN mds_diagnostician AS diagD\n"
+                    + "			ON diagnosis.id_diagnostician  = diagD.id_diagnostician\n"
+                    + "		LEFT JOIN mds_repair AS `repair` \n"
+                    + "			ON diagnosis.id_diagnosis = `repair`.id_diagnosis\n"
+                    + "		LEFT JOIN mds_diagnostician AS diagR\n"
+                    + "			ON `repair`.id_diagnostician = diagR.id_diagnostician\n"
+                    + "		LEFT JOIN mds_sent_devices AS `sent`\n"
+                    + "			ON `repair`.id_repair = sent.id_repair\n"
+                    + "		GROUP BY id_device) AS `diags`\n"
+                    + "	ON mds_device.id_device = diags.id_device\n"
                     + "	GROUP BY (imei)\n"
                     + "	ORDER BY id_device ASC) AS `table1` WHERE  table1.id_repair ='" + id_repair + "'");
 
             while (rs.next()) {
-                for (int i = 0; i < 12; i++) {
+                for (int i = 0; i < 13; i++) {
                     if (i == 4) {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("\n"));
@@ -84,6 +102,10 @@ public class Invoice {
                         document.add(new Paragraph("\n"));
                         document.add(new Paragraph("Send back date : "));
                     }
+                    if(i == 12){
+                        document.add(new Paragraph("\n"));
+                        document.add(new Paragraph("Device repaired by :"));
+                    }
                     document.add(new Paragraph(rs.getString(i + 1) + ((i == 10) ? "€" : "")));
                 }
             }
@@ -94,7 +116,7 @@ public class Invoice {
         document.close();
         Process p = Runtime
                 .getRuntime()
-                .exec("rundll32 url.dll,FileProtocolHandler c:\\" +RESULT);
+                .exec("rundll32 url.dll,FileProtocolHandler c:\\" + RESULT);
         p.waitFor();
     }
 
